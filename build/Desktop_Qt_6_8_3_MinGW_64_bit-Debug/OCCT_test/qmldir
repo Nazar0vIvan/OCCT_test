@@ -1,0 +1,5 @@
+module OCCT_test
+typeinfo appOCCT_test.qmltypes
+prefer :/qt/qml/OCCT_test/
+Main 1.0 qml/Main.qml
+

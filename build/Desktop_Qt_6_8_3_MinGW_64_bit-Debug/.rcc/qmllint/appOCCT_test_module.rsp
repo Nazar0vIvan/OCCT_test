@@ -1,0 +1,12 @@
+-I
+E:/Qt/QtProjects/OCCT_test/build/Desktop_Qt_6_8_3_MinGW_64_bit-Debug
+-I
+E:/Qt/6.8.3/mingw_64/qml
+--resource
+E:/Qt/QtProjects/OCCT_test/build/Desktop_Qt_6_8_3_MinGW_64_bit-Debug/.qt/rcc/qmake_OCCT_test.qrc
+--resource
+E:/Qt/QtProjects/OCCT_test/build/Desktop_Qt_6_8_3_MinGW_64_bit-Debug/.qt/rcc/appOCCT_test_raw_qml_0.qrc
+--resource
+E:/Qt/QtProjects/OCCT_test/build/Desktop_Qt_6_8_3_MinGW_64_bit-Debug/.qt/rcc/appOCCT_test_raw_qml_0_extra_qmldirs.qrc
+--module
+OCCT_test

@@ -1,0 +1,2 @@
+E:/Qt/QtProjects/OCCT_test/build/Desktop_Qt_6_8_3_MinGW_64_bit-Debug/appOCCT_test_autogen/include/../UVLADIE3JM/moc_occcontroller.cpp.json
+E:/Qt/QtProjects/OCCT_test/build/Desktop_Qt_6_8_3_MinGW_64_bit-Debug/appOCCT_test_autogen/include/../UVLADIE3JM/moc_occviewwindow.cpp.json
