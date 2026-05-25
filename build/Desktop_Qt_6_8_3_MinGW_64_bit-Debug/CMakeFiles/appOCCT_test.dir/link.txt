@@ -1,3 +1,0 @@
-E:\Qt\Tools\CMake_64\bin\cmake.exe -E rm -f CMakeFiles\appOCCT_test.dir/objects.a
-E:\Qt\Tools\mingw1310_64\bin\ar.exe qc CMakeFiles\appOCCT_test.dir/objects.a @CMakeFiles\appOCCT_test.dir\objects1.rsp
-E:\Qt\Tools\mingw1310_64\bin\g++.exe -DQT_QML_DEBUG -g -Wl,--whole-archive CMakeFiles\appOCCT_test.dir/objects.a -Wl,--no-whole-archive -o appOCCT_test.exe -Wl,--out-implib,libappOCCT_test.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\appOCCT_test.dir\linkLibs.rsp

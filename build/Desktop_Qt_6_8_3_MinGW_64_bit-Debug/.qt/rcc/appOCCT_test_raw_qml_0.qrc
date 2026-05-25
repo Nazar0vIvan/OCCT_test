@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/qt/qml/OCCT_test/">
-    <file alias="qml/Main.qml">E:/Qt/QtProjects/OCCT_test/qml/Main.qml</file>
-  </qresource>
-</RCC>
-
