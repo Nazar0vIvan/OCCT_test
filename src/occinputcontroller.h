@@ -1,0 +1,54 @@
+#pragma once
+
+#include <QPoint>
+#include <Qt>
+
+#include <Standard_Handle.hxx>
+
+struct OccInputResult
+{
+  bool accepted = false;
+  bool needsRedraw = false;
+  bool needsViewerUpdate = false;
+  bool cameraChanged = false;
+  bool selectionChanged = false;
+  bool hoverChanged = false;
+};
+
+class AIS_InteractiveContext;
+class V3d_View;
+
+class OccInputController
+{
+public:
+  OccInputController(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view);
+
+  bool isValid() const;
+
+  OccInputResult mousePress(const QPoint& pos, Qt::MouseButton button);
+  OccInputResult mouseMove(const QPoint& pos);
+  OccInputResult mouseRelease(Qt::MouseButton button);
+  OccInputResult wheel(const QPoint& pos, int angleDeltaY);
+
+private:
+  OccInputResult handleLeftButtonPress(const QPoint& pos);
+  OccInputResult handleRightButtonPress(const QPoint& pos);
+  OccInputResult handleMiddleButtonPress(const QPoint& pos);
+
+  OccInputResult handleRotationMove(const QPoint& pos);
+  OccInputResult handlePanMove(const QPoint& pos);
+  OccInputResult handleHoverMove(const QPoint& pos);
+
+  OccInputResult handleDetectedViewCubeOwner();
+  OccInputResult handleDetectedSelectable();
+  OccInputResult clearSelection();
+
+private:
+  Handle(AIS_InteractiveContext) m_context;
+  Handle(V3d_View) m_view;
+
+  QPoint m_lastMousePos;
+
+  bool m_rotating = false;
+  bool m_panning = false;
+};

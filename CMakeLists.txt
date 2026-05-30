@@ -21,6 +21,12 @@ qt_add_executable(appOCCT_test
     src/occviewwindow.h
     src/occworldaxes.h
     src/occworldaxes.cpp
+    src/occscene.h
+    src/occscene.cpp
+    src/occviewer.h
+    src/occviewer.cpp
+    src/occviewcube.h
+    src/occviewcube.cpp
 )
 
 qt_add_qml_module(appOCCT_test
@@ -28,6 +34,10 @@ qt_add_qml_module(appOCCT_test
     VERSION 1.0
     QML_FILES
       qml/Main.qml
+      SOURCES src/occinputcontroller.h src/occinputcontroller.cpp
+      SOURCES src/stepimporter.h src/stepimporter.cpp
+      SOURCES src/occpart.h src/occpart.cpp
+      SOURCES src/occviewport.h src/occviewport.cpp
 )
 
 target_compile_definitions(appOCCT_test PRIVATE

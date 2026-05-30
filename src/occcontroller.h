@@ -2,12 +2,12 @@
 
 #include <QObject>
 #include <QWindow>
-#include <QUrl>
+
 #include <memory>
 
-#include "occviewwindow.h"
+class OccViewWindow;
 
-class OccController : public QObject
+class OccController final : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QWindow* viewWindow READ viewWindow CONSTANT)
@@ -16,9 +16,9 @@ public:
   explicit OccController(QObject* parent = nullptr);
   ~OccController() override;
 
-  QWindow* viewWindow() const;
+  Q_DISABLE_COPY_MOVE(OccController)
 
-  Q_INVOKABLE bool importStepFile(const QUrl& fileUrl);
+  QWindow* viewWindow() const;
 
 private:
   std::unique_ptr<OccViewWindow> m_viewWindow;

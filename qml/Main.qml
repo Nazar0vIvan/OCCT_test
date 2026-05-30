@@ -20,34 +20,11 @@ ApplicationWindow {
       title: qsTr("File")
 
       Platform.MenuItem {
-        text: qsTr("Import ...")
-        onTriggered: importDialog.open()
-      }
-
-      Platform.MenuItem {
         text: qsTr("Exit")
         onTriggered: root.close()
       }
     }
   }
-
-  FileDialog {
-
-    id: importDialog
-    title: qsTr("Import file")
-    fileMode: FileDialog.OpenFile
-
-    nameFilters: [
-      "STEP files (*.step *.stp)",
-      "CAD files (*.step *.stp *.iges *.igs *.brep)",
-      "All files (*)"
-    ]
-
-    onAccepted: {
-      occController.importStepFile(selectedFile)
-    }
-  }
-
 
   WindowContainer {
     id: occContainer

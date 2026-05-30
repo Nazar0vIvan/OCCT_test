@@ -1,6 +1,6 @@
 #include "occcontroller.h"
 
-#include <QDebug>
+#include "occviewwindow.h"
 
 OccController::OccController(QObject* parent) : QObject(parent), m_viewWindow(std::make_unique<OccViewWindow>())
 {
@@ -17,16 +17,4 @@ OccController::~OccController()
 QWindow* OccController::viewWindow() const
 {
   return m_viewWindow.get();
-}
-
-bool OccController::importStepFile(const QUrl& fileUrl)
-{
-  const QString filePath = fileUrl.toLocalFile();
-
-  if (filePath.isEmpty()) {
-    qWarning() << "Invalid STEP file URL:" << fileUrl;
-    return false;
-  }
-
-  return m_viewWindow && m_viewWindow->importStepFile(filePath);
 }

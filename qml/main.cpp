@@ -4,7 +4,7 @@
 
 #include "occcontroller.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 
@@ -12,12 +12,12 @@ int main(int argc, char *argv[])
   OccController occController;
 
   qmlRegisterSingletonInstance(
-    "OCCT_test.Backend",
-    1,
-    0,
-    "OccController",
-    &occController
-  );
+      "OCCT_test.Backend",
+      1,
+      0,
+      "OccController",
+      &occController
+      );
 
   QQmlApplicationEngine engine;
 
