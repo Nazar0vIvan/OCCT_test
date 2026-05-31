@@ -3,11 +3,11 @@
 #include <QDebug>
 
 OccViewport::OccViewport(const Aspect_Handle nativeWindowHandle, const QString& cadDirectory)
-    : m_viewer(nativeWindowHandle),
-      m_scene(m_viewer.context(),m_viewer.view()),
-      m_input(m_viewer.context(),m_viewer.view())
+  : m_viewer(nativeWindowHandle),
+    m_scene(m_viewer.context(),m_viewer.view(), cadDirectory),
+    m_input(m_viewer.context(),m_viewer.view())
 {
-  initializeStaticScene(cadDirectory);
+  initializeStaticScene();
 }
 
 bool OccViewport::isValid() const
@@ -66,14 +66,14 @@ void OccViewport::wheel(const QPoint& pos, const int angleDeltaY)
   applyInputResult(m_input.wheel(pos, angleDeltaY));
 }
 
-void OccViewport::initializeStaticScene(const QString& cadDirectory)
+void OccViewport::initializeStaticScene()
 {
   if (!isValid()) {
     qWarning() << "Cannot initialize OCCT viewport: invalid viewer, scene, or input controller";
     return;
   }
 
-  const bool sceneLoaded = m_scene.loadStaticScene(cadDirectory);
+  const bool sceneLoaded = m_scene.loadStaticScene();
 
   if (!sceneLoaded) {
     qWarning() << "OCCT static scene was initialized with errors";

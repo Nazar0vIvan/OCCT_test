@@ -37,7 +37,7 @@ public:
   void wheel(const QPoint& pos, int angleDeltaY);
 
 private:
-  void initializeStaticScene(const QString& cadDirectory);
+  void initializeStaticScene();
   void applyInputResult(const OccInputResult& result);
 
 private:

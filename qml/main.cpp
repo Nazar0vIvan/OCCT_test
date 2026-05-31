@@ -4,9 +4,14 @@
 
 #include "occcontroller.h"
 
+#include <Font_FontMgr.hxx>
+
 int main(int argc, char* argv[])
 {
   QApplication app(argc, argv);
+
+  const Handle(Font_FontMgr) fontMgr = Font_FontMgr::GetInstance();
+  fontMgr->InitFontDataBase();
 
   // Must outlive QQmlApplicationEngine.
   OccController occController;

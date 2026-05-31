@@ -1,5 +1,7 @@
 #include "occviewcube.h"
 
+#include <algorithm>
+
 #include <AIS_DisplayMode.hxx>
 #include <AIS_ViewCube.hxx>
 
@@ -7,7 +9,7 @@
 
 #include <Graphic3d_TransformPers.hxx>
 #include <Graphic3d_TypeOfShadingModel.hxx>
-#include <Graphic3d_Vec.hxx>
+#include <NCollection_Vec2.hxx>
 #include <Graphic3d_ZLayerId.hxx>
 
 #include <Prs3d_DatumAspect.hxx>
@@ -18,8 +20,6 @@
 #include <Quantity_Color.hxx>
 #include <Quantity_NameOfColor.hxx>
 
-#include <Standard_TypeDef.hxx>
-
 #include <V3d_TypeOfOrientation.hxx>
 
 namespace
@@ -27,9 +27,9 @@ namespace
   Quantity_Color rgb(const int r, const int g, const int b)
   {
     return Quantity_Color(
-      static_cast<Standard_Real>(r) / 255.0,
-      static_cast<Standard_Real>(g) / 255.0,
-      static_cast<Standard_Real>(b) / 255.0,
+      static_cast<double>(std::clamp(r, 0, 255)) / 255.0,
+      static_cast<double>(std::clamp(g, 0, 255)) / 255.0,
+      static_cast<double>(std::clamp(b, 0, 255)) / 255.0,
       Quantity_TOC_RGB
     );
   }
@@ -74,7 +74,7 @@ void OccViewCube::configureStyle()
 {
   if (m_cube.IsNull()) return;
 
-  m_cube->SetSize(50.0, Standard_False);
+  m_cube->SetSize(50.0, false);
 
   m_cube->SetBoxColor(rgb(200, 200, 230));
   m_cube->SetInnerColor(rgb(0, 0, 0));
@@ -103,7 +103,7 @@ void OccViewCube::configureStyle()
 
     hoverStyle->SetColor(hoverColor);
     hoverStyle->SetDisplayMode(AIS_Shaded);
-    hoverStyle->SetFaceBoundaryDraw(Standard_False);
+    hoverStyle->SetFaceBoundaryDraw(false);
     hoverStyle->SetShadingModel(Graphic3d_TypeOfShadingModel_Unlit);
 
     if (!hoverStyle->ShadingAspect().IsNull()) {
@@ -121,7 +121,7 @@ void OccViewCube::configureText()
   if (m_cube.IsNull()) return;
 
   m_cube->SetTextColor(Quantity_NOC_BLACK);
-  m_cube->SetFont("Consolas");
+  m_cube->SetFont("Arial");
   m_cube->SetFontHeight(14.0);
 }
 
@@ -129,8 +129,8 @@ void OccViewCube::configureEdgesAndCorners()
 {
   if (m_cube.IsNull()) return;
 
-  m_cube->SetDrawEdges(Standard_True);
-  m_cube->SetDrawVertices(Standard_True);
+  m_cube->SetDrawEdges(true);
+  m_cube->SetDrawVertices(true);
   m_cube->SetBoxFacetExtension(12.0);
 
   if (!m_cube->BoxEdgeStyle().IsNull()) {
@@ -146,7 +146,7 @@ void OccViewCube::configureAxes()
 {
   if (m_cube.IsNull()) return;
 
-  m_cube->SetDrawAxes(Standard_True);
+  m_cube->SetDrawAxes(true);
   m_cube->SetAxesLabels("", "", "");
 
   m_cube->SetAxesPadding(10.0);
@@ -181,7 +181,7 @@ void OccViewCube::configureTransformPersistence()
     new Graphic3d_TransformPers(
         Graphic3d_TMF_TriedronPers,
         Aspect_TOTP_LEFT_LOWER,
-        Graphic3d_Vec2i(100, 100)
+        NCollection_Vec2<int>(100, 100)
     )
   );
 
@@ -192,6 +192,6 @@ void OccViewCube::configureInteraction()
 {
   if (m_cube.IsNull()) return;
 
-  m_cube->SetResetCamera(Standard_True);
-  m_cube->SetFitSelected(Standard_False);
+  m_cube->SetResetCamera(true);
+  m_cube->SetFitSelected(false);
 }

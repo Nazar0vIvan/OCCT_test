@@ -10,8 +10,6 @@
 
 #include <STEPControl_Reader.hxx>
 
-#include <Standard_Integer.hxx>
-
 CadImportResult StepImporter::importFile(const QString& filePath) const
 {
   if (filePath.trimmed().isEmpty()) {
@@ -50,7 +48,7 @@ CadImportResult StepImporter::importFile(const QString& filePath) const
   }
 
   timer.restart();
-  const Standard_Integer transferredRoots = reader.TransferRoots();
+  const int transferredRoots = reader.TransferRoots();
   qDebug() << "STEP TransferRoots ms:" << timer.elapsed();
 
   if (transferredRoots <= 0) {

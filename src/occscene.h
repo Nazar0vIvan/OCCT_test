@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stepimporter.h"
+#include "cachedshapeloader.h"
 #include "occpart.h"
 #include "occviewcube.h"
 #include "occworldaxes.h"
@@ -8,7 +8,6 @@
 #include <QString>
 
 #include <Standard_Handle.hxx>
-#include <Standard_Real.hxx>
 
 #include <Quantity_Color.hxx>
 
@@ -23,7 +22,11 @@ class TopoDS_Shape;
 class OccScene final
 {
 public:
-  OccScene(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view);
+  OccScene(
+    const Handle(AIS_InteractiveContext)& context,
+    const Handle(V3d_View)& view,
+    const QString& cadDirectory
+  );
 
   ~OccScene() = default;
 
@@ -35,10 +38,10 @@ public:
 
   [[nodiscard]] bool isValid() const;
 
-  bool loadStaticScene(const QString& cadDirectory);
+  bool loadStaticScene();
 
   bool addStepPart(
-    const QString& filePath,
+    const QString& stpFileName,
     const gp_Trsf& transform = gp_Trsf(),
     const Quantity_Color& color = Quantity_Color(0.72, 0.76, 0.80, Quantity_TOC_RGB),
     OccPart::SelectionMode selectionMode = OccPart::SelectionMode::None
@@ -63,7 +66,7 @@ private:
   bool displayPart(OccPart& part);
   void activateAllSelectionModes(const OccPart& part);
 
-  [[nodiscard]] Standard_Real currentWorldAxisLength() const;
+  [[nodiscard]] double currentWorldAxisLength() const;
 
   [[nodiscard]] static Quantity_Color rgb(int r, int g, int b);
 
@@ -71,7 +74,7 @@ private:
   Handle(AIS_InteractiveContext) m_context;
   Handle(V3d_View) m_view;
 
-  StepImporter m_stepImporter;
+  CachedShapeLoader m_shapeLoader;
 
   std::vector<OccPart> m_parts;
 

@@ -4,15 +4,12 @@
 #include <AIS_SelectionScheme.hxx>
 #include <AIS_ViewCube.hxx>
 
-#include <Standard_TypeDef.hxx>
-
 #include <V3d_View.hxx>
 
 OccInputController::OccInputController(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view)
   : m_context(context),
     m_view(view)
-{
-}
+{}
 
 bool OccInputController::isValid() const
 {
@@ -104,7 +101,7 @@ OccInputResult OccInputController::handleLeftButtonPress(const QPoint& pos)
     pos.x(),
     pos.y(),
     m_view,
-    Standard_True
+    true
   );
 
   if (!m_context->HasDetected()) {
@@ -180,7 +177,7 @@ OccInputResult OccInputController::handleHoverMove(const QPoint& pos)
     pos.x(),
     pos.y(),
     m_view,
-    Standard_True
+    true
   );
 
   OccInputResult result;
@@ -225,7 +222,7 @@ OccInputResult OccInputController::handleDetectedSelectable()
 
 OccInputResult OccInputController::clearSelection()
 {
-  m_context->ClearSelected(Standard_False);
+  m_context->ClearSelected(false);
 
   OccInputResult result;
   result.accepted = true;

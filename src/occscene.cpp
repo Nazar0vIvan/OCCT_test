@@ -30,20 +30,20 @@
 #include <cmath>
 
 
-OccScene::OccScene(const Handle(AIS_InteractiveContext)& context,const Handle(V3d_View)& view)
+OccScene::OccScene(const Handle(AIS_InteractiveContext)& context,const Handle(V3d_View)& view, const QString& cadDirectory)
   : m_context(context),
     m_view(view),
+    m_shapeLoader(cadDirectory),
     m_worldAxes(currentWorldAxisLength()),
     m_viewCube()
-{
-}
+{}
 
 bool OccScene::isValid() const
 {
   return !m_context.IsNull() && !m_view.IsNull();
 }
 
-bool OccScene::loadStaticScene(const QString& cadDirectory)
+bool OccScene::loadStaticScene()
 {
   if (!isValid()) {
     qWarning() << "Cannot load static OCCT scene: context or view is null";
@@ -54,8 +54,6 @@ bool OccScene::loadStaticScene(const QString& cadDirectory)
 
   bool ok = true;
 
-  const QDir cadDir(cadDirectory);
-
   // ---------------------------------------------------------------------------
   // Static imported STEP files.
   //
@@ -63,13 +61,13 @@ bool OccScene::loadStaticScene(const QString& cadDirectory)
   // ---------------------------------------------------------------------------
 
   // 0
-  ok = addStepPart(cadDir.filePath(QStringLiteral("0_BASE.stp"))) && ok;
+  ok = addStepPart(QStringLiteral("0_BASE.stp")) && ok;
 
   // 1
   gp_Trsf trl1;
   trl1.SetTranslation(gp_Vec(0.0, 0.0, 227.0));
 
-  ok = addStepPart(cadDir.filePath(QStringLiteral("1_ROTATING_COLUMN.stp")), trl1) && ok;
+  ok = addStepPart(QStringLiteral("1_ROTATING_COLUMN.stp"), trl1) && ok;
 
   // 2
   gp_Trsf rotX2;
@@ -82,7 +80,7 @@ bool OccScene::loadStaticScene(const QString& cadDirectory)
 
   gp_Trsf trf2 = trl2 * rotX2;
 
-  ok = addStepPart(cadDir.filePath(QStringLiteral("2_LINK_ARM.stp")), trf2) && ok;
+  ok = addStepPart(QStringLiteral("2_LINK_ARM.stp"), trf2) && ok;
 
   // 3
   gp_Trsf rot3X;
@@ -97,7 +95,7 @@ bool OccScene::loadStaticScene(const QString& cadDirectory)
   trl3.SetTranslation(gp_Vec(150.0, -101.5, 1060));
 
   gp_Trsf trf3 = trl3 * rot3Y * rot3X;
-  ok = addStepPart(cadDir.filePath(QStringLiteral("3_IN-LINE_WRIST.stp")), trf3) && ok;
+  ok = addStepPart(QStringLiteral("3_IN-LINE_WRIST.stp"), trf3) && ok;
 
   // 4
   gp_Trsf rot4Y;
@@ -113,7 +111,7 @@ bool OccScene::loadStaticScene(const QString& cadDirectory)
 
   gp_Trsf trf4 = trl4 * rot4X * rot4Y;
 
-  ok = addStepPart(cadDir.filePath(QStringLiteral("4_WRIST1.stp")), trf4) && ok;
+  ok = addStepPart(QStringLiteral("4_WRIST1.stp"), trf4) && ok;
 
   // 5
   gp_Trsf rot5Y;
@@ -129,7 +127,7 @@ bool OccScene::loadStaticScene(const QString& cadDirectory)
 
   gp_Trsf trf5 = trl5 * rot5Z * rot5Y;
 
-  ok = addStepPart(cadDir.filePath(QStringLiteral("5_WRIST2.stp")), trf5) && ok;
+  ok = addStepPart(QStringLiteral("5_WRIST2.stp"), trf5) && ok;
 
   // 6
   gp_Trsf rot6Y;
@@ -145,7 +143,7 @@ bool OccScene::loadStaticScene(const QString& cadDirectory)
 
   gp_Trsf trf6 = trl6 * rot6X * rot6Y;
 
-  ok = addStepPart(cadDir.filePath(QStringLiteral("6_WRIST3.stp")), trf6) && ok;
+  ok = addStepPart(QStringLiteral("6_WRIST3.stp"), trf6) && ok;
 
   // ---------------------------------------------------------------------------
   // Static native OCCT shapes.
@@ -188,7 +186,7 @@ bool OccScene::loadStaticScene(const QString& cadDirectory)
 }
 
 bool OccScene::addStepPart(
-  const QString& filePath,
+  const QString& stpFileName,
   const gp_Trsf& transform,
   const Quantity_Color& color,
   OccPart::SelectionMode selectionMode)
@@ -198,15 +196,15 @@ bool OccScene::addStepPart(
     return false;
   }
 
-  const CadImportResult importResult = m_stepImporter.importFile(filePath);
+  const CachedShapeResult result = m_shapeLoader.loadStpWithCache(stpFileName);
 
-  if (!importResult.ok) {
-    qWarning() << importResult.error;
+  if (!result.ok) {
+    qWarning() << result.error;
     return false;
   }
 
   return addShapePart(
-    importResult.shape,
+    result.shape,
     transform,
     color,
     selectionMode
@@ -253,9 +251,7 @@ bool OccScene::addShapePart(
 
 void OccScene::updateCameraDependentObjects()
 {
-  if (!isValid()) {
-    return;
-  }
+  if (!isValid()) return;
 
   if (!m_worldAxesDisplayed) {
     displayWorldAxes();
@@ -274,13 +270,9 @@ void OccScene::displayInfrastructure()
 
 void OccScene::displayWorldAxes()
 {
-  if (!isValid()) {
-    return;
-  }
+  if (!isValid()) return;
 
-  if (m_worldAxesDisplayed) {
-    return;
-  }
+  if (m_worldAxesDisplayed) return;
 
   if (!m_worldAxes.isValid()) {
     qWarning() << "Cannot display world axes: OccWorldAxes is invalid";
@@ -289,9 +281,9 @@ void OccScene::displayWorldAxes()
 
   m_worldAxes.setLength(currentWorldAxisLength());
 
-  m_context->Display(m_worldAxes.xAxis(), Standard_False);
-  m_context->Display(m_worldAxes.yAxis(), Standard_False);
-  m_context->Display(m_worldAxes.zAxis(), Standard_False);
+  m_context->Display(m_worldAxes.xAxis(), false);
+  m_context->Display(m_worldAxes.yAxis(), false);
+  m_context->Display(m_worldAxes.zAxis(), false);
 
   // Passive reference axes: not selectable.
   m_context->Deactivate(m_worldAxes.xAxis());
@@ -303,40 +295,30 @@ void OccScene::displayWorldAxes()
 
 void OccScene::redisplayWorldAxes()
 {
-  if (!isValid()) {
-    return;
-  }
+  if (!isValid()) return;
 
-  if (!m_worldAxesDisplayed) {
-    return;
-  }
+  if (!m_worldAxesDisplayed) return;
 
-  if (!m_worldAxes.isValid()) {
-    return;
-  }
+  if (!m_worldAxes.isValid()) return;
 
-  m_context->Redisplay(m_worldAxes.xAxis(), Standard_False);
-  m_context->Redisplay(m_worldAxes.yAxis(), Standard_False);
-  m_context->Redisplay(m_worldAxes.zAxis(), Standard_False);
+  m_context->Redisplay(m_worldAxes.xAxis(), false);
+  m_context->Redisplay(m_worldAxes.yAxis(), false);
+  m_context->Redisplay(m_worldAxes.zAxis(), false);
 }
 
 void OccScene::displayViewCube()
 {
-  if (!isValid()) {
-    return;
-  }
+  if (!isValid()) return;
 
-  if (m_viewCubeDisplayed) {
-    return;
-  }
+  if (m_viewCubeDisplayed) return;
 
   if (!m_viewCube.isValid()) {
     qWarning() << "Cannot display ViewCube: OccViewCube is invalid";
     return;
   }
 
-  m_context->Display(m_viewCube.handle(), Standard_False);
-  m_context->Activate(m_viewCube.handle(), 0, Standard_False);
+  m_context->Display(m_viewCube.handle(), false);
+  m_context->Activate(m_viewCube.handle(), 0, false);
 
   m_viewCubeDisplayed = true;
 }
@@ -347,13 +329,13 @@ bool OccScene::displayPart(OccPart& part)
 
   if (!part.isValid()) return false;
 
-  const Standard_Integer selectionMode = part.selectionMode() == OccPart::SelectionMode::None ? -1 : 0;
+  const int selectionMode = part.selectionMode() == OccPart::SelectionMode::None ? -1 : 0;
 
   m_context->Display(
     part.handle(),
     AIS_Shaded,
     selectionMode,
-    Standard_False
+    false
   );
 
   if (part.selectionMode() == OccPart::SelectionMode::All) {
@@ -361,7 +343,7 @@ bool OccScene::displayPart(OccPart& part)
   }
 
   if (part.hasTrihedron()) {
-    m_context->Display(part.trihedron(), Standard_False);
+    m_context->Display(part.trihedron(), false);
     m_context->Deactivate(part.trihedron());
   }
 
@@ -377,32 +359,32 @@ void OccScene::activateAllSelectionModes(const OccPart& part)
   m_context->SetSelectionModeActive(
     part.handle(),
     AIS_Shape::SelectionMode(TopAbs_FACE),
-    Standard_True,
+    true,
     AIS_SelectionModesConcurrency_Multiple
   );
 
   m_context->SetSelectionModeActive(
     part.handle(),
     AIS_Shape::SelectionMode(TopAbs_EDGE),
-    Standard_True,
+    true,
     AIS_SelectionModesConcurrency_Multiple
   );
 
   m_context->SetSelectionModeActive(
     part.handle(),
     AIS_Shape::SelectionMode(TopAbs_VERTEX),
-    Standard_True,
+    true,
     AIS_SelectionModesConcurrency_Multiple
   );
 }
 
-Standard_Real OccScene::currentWorldAxisLength() const
+double OccScene::currentWorldAxisLength() const
 {
   if (m_view.IsNull() || m_view->Camera().IsNull()) {
     return 10.0;
   }
 
-  const Standard_Real cameraScale = m_view->Camera()->Scale();
+  const double cameraScale = m_view->Camera()->Scale();
 
   if (cameraScale <= 0.0) {
     return 10.0;
@@ -414,9 +396,9 @@ Standard_Real OccScene::currentWorldAxisLength() const
 Quantity_Color OccScene::rgb(const int r, const int g, const int b)
 {
   return Quantity_Color(
-      static_cast<Standard_Real>(r) / 255.0,
-      static_cast<Standard_Real>(g) / 255.0,
-      static_cast<Standard_Real>(b) / 255.0,
-      Quantity_TOC_RGB
-      );
+    static_cast<double>(r) / 255.0,
+    static_cast<double>(g) / 255.0,
+    static_cast<double>(b) / 255.0,
+    Quantity_TOC_RGB
+  );
 }

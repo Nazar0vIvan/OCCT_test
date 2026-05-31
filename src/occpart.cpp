@@ -88,7 +88,7 @@ bool OccPart::hasTrihedron() const
   return !m_trihedron.IsNull();
 }
 
-void OccPart::enableTrihedron(const Standard_Real size)
+void OccPart::enableTrihedron(const double size)
 {
   m_trihedronEnabled = true;
   m_trihedronSize = size > 0.0 ? size : 20.0;
@@ -111,9 +111,7 @@ void OccPart::createPresentation(const TopoDS_Shape& shape)
 
 void OccPart::configureBasePresentation()
 {
-  if (m_handle.IsNull()) {
-    return;
-  }
+  if (m_handle.IsNull()) return;
 
   m_handle->SetDisplayMode(AIS_Shaded);
   m_handle->SetMaterial(Graphic3d_NOM_SATIN);
@@ -121,9 +119,7 @@ void OccPart::configureBasePresentation()
 
 void OccPart::configureFaceBoundary()
 {
-  if (m_handle.IsNull()) {
-    return;
-  }
+  if (m_handle.IsNull()) return;
 
   Handle(Prs3d_Drawer) drawer = m_handle->Attributes();
 
@@ -132,7 +128,7 @@ void OccPart::configureFaceBoundary()
     m_handle->SetAttributes(drawer);
   }
 
-  drawer->SetFaceBoundaryDraw(Standard_True);
+  drawer->SetFaceBoundaryDraw(true);
 
   drawer->SetFaceBoundaryAspect(
     new Prs3d_LineAspect(
@@ -183,13 +179,11 @@ void OccPart::rebuildTrihedron()
 
 void OccPart::configureTrihedron()
 {
-  if (m_trihedron.IsNull()) {
-    return;
-  }
+  if (m_trihedron.IsNull()) return;
 
   m_trihedron->SetSize(m_trihedronSize);
   m_trihedron->SetDatumDisplayMode(Prs3d_DM_Shaded);
-  m_trihedron->SetDrawArrows(Standard_True);
+  m_trihedron->SetDrawArrows(true);
 
   Handle(Prs3d_Drawer) drawer = m_trihedron->Attributes();
 

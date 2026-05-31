@@ -43,7 +43,7 @@ public:
   void setSelectionMode(SelectionMode selectionMode);
 
   bool hasTrihedron() const;
-  void enableTrihedron(Standard_Real size = 20.0);
+  void enableTrihedron(double size = 20.0);
   void disableTrihedron();
 
 private:
@@ -67,6 +67,6 @@ private:
   SelectionMode m_selectionMode = SelectionMode::None;
 
   bool m_trihedronEnabled = false;
-  Standard_Real m_trihedronSize = 20.0;
+  double m_trihedronSize = 20.0;
 
 };

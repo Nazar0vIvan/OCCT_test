@@ -29,9 +29,9 @@ namespace
 Quantity_Color rgb(const int r, const int g, const int b)
 {
   return Quantity_Color(
-    static_cast<Standard_Real>(r) / 255.0,
-    static_cast<Standard_Real>(g) / 255.0,
-    static_cast<Standard_Real>(b) / 255.0,
+    static_cast<double>(r) / 255.0,
+    static_cast<double>(g) / 255.0,
+    static_cast<double>(b) / 255.0,
     Quantity_TOC_RGB
   );
 }
@@ -160,7 +160,7 @@ void OccViewer::configureContext()
 {
   if (m_context.IsNull()) return;
 
-  m_context->SetAutomaticHilight(Standard_True);
+  m_context->SetAutomaticHilight(true);
   m_context->SetPixelTolerance(5);
 }
 
@@ -199,7 +199,7 @@ void OccViewer::configureHighlightStyles()
   if (!hoverStyle.IsNull()) {
     hoverStyle->SetColor(rgb(102, 179, 204));
     hoverStyle->SetDisplayMode(AIS_Shaded);
-    hoverStyle->SetFaceBoundaryDraw(Standard_False);
+    hoverStyle->SetFaceBoundaryDraw(false);
     hoverStyle->SetZLayer(Graphic3d_ZLayerId_Top);
   }
 
@@ -208,7 +208,7 @@ void OccViewer::configureHighlightStyles()
   if (!selectionStyle.IsNull()) {
     selectionStyle->SetColor(rgb(0, 128, 255));
     selectionStyle->SetDisplayMode(AIS_Shaded);
-    selectionStyle->SetFaceBoundaryDraw(Standard_False);
+    selectionStyle->SetFaceBoundaryDraw(false);
     selectionStyle->SetZLayer(Graphic3d_ZLayerId_Top);
   }
 }
