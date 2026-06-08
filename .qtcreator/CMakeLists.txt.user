@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 19.0.2, 2026-05-31T17:53:31. -->
+<!-- Written by QtCreator 19.0.2, 2026-06-08T22:11:42. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -223,8 +223,8 @@
      <valuelist type="QVariantList" key="CustomOutputParsers"/>
      <value type="int" key="PE.EnvironmentAspect.Base">2</value>
      <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes">
-      <value type="QString">CASROOT=D:\Qt\QtProjects\libs\OCCT-8_0_0\occt-install</value>
-      <value type="QString">Path=D:\Qt\QtProjects\libs\OCCT-8_0_0\occt-install\bin;D:\Qt\6.8.3\mingw_64\bin;D:\Qt\Tools\mingw1310_64\bin;D:\Qt\6.8.3\mingw_64\lib;D:\Qt\QtProjects\libs\OCCT-8_0_0\occt-install\lib;D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\freetype-install\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\AmneziaWG\;C:\Users\vano8\AppData\Local\Microsoft\WindowsApps;C:\Users\vano8\AppData\Local\Programs\Microsoft VS Code\bin;D:\Qt\Tools\Ninja;D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\freetype-install\bin</value>
+      <value type="QString">CASROOT=D:\Qt\QtProjects\libs\OCCT-8_0_0\install-gcc1310_64</value>
+      <value type="QString">Path=D:\Qt\QtProjects\libs\OCCT-8_0_0\install-gcc1310_64\bin;D:\Qt\6.8.3\mingw_64\bin;D:\Qt\Tools\mingw1310_64\bin;D:\Qt\6.8.3\mingw_64\lib;D:\Qt\QtProjects\libs\OCCT-8_0_0\install-gcc1310_64\lib;D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\install-gcc1310_64\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\AmneziaWG\;C:\Users\vano8\AppData\Local\Microsoft\WindowsApps;C:\Users\vano8\AppData\Local\Programs\Microsoft VS Code\bin;D:\Qt\Tools\Ninja;D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\install-gcc1310_64l\bin</value>
       <value type="QString">Path+=D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\freetype-install\bin</value>
      </valuelist>
      <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
@@ -300,8 +300,8 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes">
-     <value type="QString">CASROOT=D:\Qt\QtProjects\libs\OCCT-8_0_0\occt-install</value>
-     <value type="QString">Path=D:\Qt\QtProjects\libs\OCCT-8_0_0\occt-install\bin;D:\Qt\6.8.3\mingw_64\bin;D:\Qt\Tools\mingw1310_64\bin;D:\Qt\6.8.3\mingw_64\lib;D:\Qt\QtProjects\libs\OCCT-8_0_0\occt-install\lib;D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\freetype-install\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\AmneziaWG\;C:\Users\vano8\AppData\Local\Microsoft\WindowsApps;C:\Users\vano8\AppData\Local\Programs\Microsoft VS Code\bin;D:\Qt\Tools\Ninja;D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\freetype-install\bin</value>
+     <value type="QString">CASROOT=D:\Qt\QtProjects\libs\OCCT-8_0_0\install-gcc1310_64</value>
+     <value type="QString">Path=D:\Qt\QtProjects\libs\OCCT-8_0_0\install-gcc1310_64\bin;D:\Qt\6.8.3\mingw_64\bin;D:\Qt\Tools\mingw1310_64\bin;D:\Qt\6.8.3\mingw_64\lib;D:\Qt\QtProjects\libs\OCCT-8_0_0\install-gcc1310_64\lib;D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\install-gcc1310_64\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\AmneziaWG\;C:\Users\vano8\AppData\Local\Microsoft\WindowsApps;C:\Users\vano8\AppData\Local\Programs\Microsoft VS Code\bin;D:\Qt\Tools\Ninja;D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\install-gcc1310_64l\bin</value>
      <value type="QString">Path+=D:\Qt\QtProjects\libs\OCCT-8_0_0\3rdparty\freetype-install\bin</value>
     </valuelist>
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>

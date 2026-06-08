@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2 Widgets)
 qt_standard_project_setup(REQUIRES 6.8)
 
-set(OpenCASCADE_DIR "D:/Qt/QtProjects/libs/OCCT-8_0_0/occt-install/lib/cmake/opencascade")
+set(OpenCASCADE_DIR "D:/Qt/QtProjects/libs/OCCT-8_0_0/install-gcc1310_64/lib/cmake/opencascade")
 
 find_package(OpenCASCADE REQUIRED)
 
