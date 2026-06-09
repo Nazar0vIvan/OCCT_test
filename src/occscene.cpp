@@ -55,9 +55,7 @@ bool OccScene::loadStaticScene()
   bool ok = true;
 
   // ---------------------------------------------------------------------------
-  // Static imported STEP files.
-  //
-  // Add all compile-time/static CAD files here.
+  // ROBOT
   // ---------------------------------------------------------------------------
 
   // 0
@@ -146,10 +144,19 @@ bool OccScene::loadStaticScene()
   ok = addStepPart(QStringLiteral("6_WRIST3.stp"), trf6) && ok;
 
   // ---------------------------------------------------------------------------
-  // Static native OCCT shapes.
+  // TABLE
+  // ---------------------------------------------------------------------------
+
+  TopoDS_Shape tableShape = BRepPrimAPI_MakeBox(740.0, 940.0, 20.0).Shape();
+
+
+  gp_Trsf trf_table;
+  trf_table.SetTranslation(gp_Vec(900.0, -470.0, 255.0));
+
+  ok = addShapePart(tableShape, trf_table) && ok;
+
+  // ---------------------------------------------------------------------------
   //
-  // Keep or remove these examples depending on whether you need procedural
-  // geometry in the scene.
   // ---------------------------------------------------------------------------
 
   /*
