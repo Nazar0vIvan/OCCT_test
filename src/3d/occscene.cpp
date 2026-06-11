@@ -193,67 +193,31 @@ bool OccScene::loadStaticScene()
 }
 
 bool OccScene::addStepPart(
-  const QString& stpFileName,
-  const gp_Trsf& transform,
-  const Quantity_Color& color,
-  OccPart::SelectionMode selectionMode)
+    const QString& stpFileName,
+    const gp_Trsf& transform,
+    const Quantity_Color& color,
+    OccPart::SelectionMode selectionMode)
 {
-  if (!isValid()) {
-    qWarning() << "Cannot add STEP part: context or view is null";
-    return false;
-  }
-
-  const CachedShapeResult result = m_shapeLoader.loadStpWithCache(stpFileName);
-
-  if (!result.ok) {
-    qWarning() << result.error;
-    return false;
-  }
-
-  return addShapePart(
-    result.shape,
-    transform,
-    color,
-    selectionMode
-  );
+  return addStepPartWithId(
+             stpFileName,
+             transform,
+             color,
+             selectionMode
+             ).has_value();
 }
 
 bool OccScene::addShapePart(
-  const TopoDS_Shape& shape,
-  const gp_Trsf& transform,
-  const Quantity_Color& color,
-  const OccPart::SelectionMode selectionMode)
+    const TopoDS_Shape& shape,
+    const gp_Trsf& transform,
+    const Quantity_Color& color,
+    const OccPart::SelectionMode selectionMode)
 {
-  if (!isValid()) {
-    qWarning() << "Cannot add OCCT shape part: context or view is null";
-    return false;
-  }
-
-  if (shape.IsNull()) {
-    qWarning() << "Cannot add OCCT shape part: TopoDS_Shape is null";
-    return false;
-  }
-
-  QElapsedTimer timer;
-
-  timer.start();
-  OccPart part(shape, transform, color, selectionMode);
-  qDebug() << "OccPart construction ms:" << timer.elapsed();
-
-  if (!part.isValid()) {
-    qWarning() << "Cannot add OCCT shape part: AIS presentation was not created";
-    return false;
-  }
-
-  timer.restart();
-  if (!displayPart(part)) {
-    return false;
-  }
-  qDebug() << "Display part ms:" << timer.elapsed();
-
-  m_parts.emplace_back(std::move(part));
-
-  return true;
+  return addShapePartWithId(
+             shape,
+             transform,
+             color,
+             selectionMode
+             ).has_value();
 }
 
 void OccScene::updateCameraDependentObjects()
@@ -332,18 +296,23 @@ void OccScene::displayViewCube()
 
 bool OccScene::displayPart(OccPart& part)
 {
-  if (!isValid()) return false;
+  if (!isValid()) {
+    return false;
+  }
 
-  if (!part.isValid()) return false;
+  if (!part.isValid()) {
+    return false;
+  }
 
-  const int selectionMode = part.selectionMode() == OccPart::SelectionMode::None ? -1 : 0;
+  const int selectionMode =
+      part.selectionMode() == OccPart::SelectionMode::None ? -1 : 0;
 
   m_context->Display(
-    part.handle(),
-    AIS_Shaded,
-    selectionMode,
-    false
-  );
+      part.handle(),
+      AIS_Shaded,
+      selectionMode,
+      false
+      );
 
   if (part.selectionMode() == OccPart::SelectionMode::All) {
     activateAllSelectionModes(part);
@@ -351,6 +320,7 @@ bool OccScene::displayPart(OccPart& part)
 
   if (part.hasTrihedron()) {
     m_context->Display(part.trihedron(), false);
+    m_context->SetZLayer(part.trihedron(), Graphic3d_ZLayerId_Topmost);
     m_context->Deactivate(part.trihedron());
   }
 
@@ -399,6 +369,88 @@ double OccScene::currentWorldAxisLength() const
 
   return cameraScale * 0.05;
 }
+
+std::optional<OccScene::PartId> OccScene::addStepPartWithId(
+    const QString& stpFileName,
+    const gp_Trsf& transform,
+    const Quantity_Color& color,
+    OccPart::SelectionMode selectionMode,
+    const bool showTrihedron,
+    const double trihedronSize)
+{
+  if (!isValid()) {
+    qWarning() << "Cannot add STEP part: context or view is null";
+    return std::nullopt;
+  }
+
+  const CachedShapeResult result = m_shapeLoader.loadStpWithCache(stpFileName);
+
+  if (!result.ok) {
+    qWarning() << result.error;
+    return std::nullopt;
+  }
+
+  return addShapePartWithId(
+      result.shape,
+      transform,
+      color,
+      selectionMode,
+      showTrihedron,
+      trihedronSize
+      );
+}
+
+std::optional<OccScene::PartId> OccScene::addShapePartWithId(
+    const TopoDS_Shape& shape,
+    const gp_Trsf& transform,
+    const Quantity_Color& color,
+    const OccPart::SelectionMode selectionMode,
+    const bool showTrihedron,
+    const double trihedronSize)
+{
+  if (!isValid()) {
+    qWarning() << "Cannot add OCCT shape part: context or view is null";
+    return std::nullopt;
+  }
+
+  if (shape.IsNull()) {
+    qWarning() << "Cannot add OCCT shape part: TopoDS_Shape is null";
+    return std::nullopt;
+  }
+
+  OccPart part(shape, transform, color, selectionMode);
+
+  if (showTrihedron) {
+    part.enableTrihedron(trihedronSize);
+  }
+
+  if (!part.isValid()) {
+    qWarning() << "Cannot add OCCT shape part: AIS presentation was not created";
+    return std::nullopt;
+  }
+
+  if (!displayPart(part)) {
+    return std::nullopt;
+  }
+
+  const PartId id{m_parts.size()};
+  m_parts.emplace_back(std::move(part));
+
+  return id;
+}
+
+bool OccScene::setPartTransform(const PartId id, const gp_Trsf& transform)
+{
+  if (id.value >= m_parts.size()) {
+    qWarning() << "Invalid OccScene part id:" << id.value;
+    return false;
+  }
+
+  m_parts[id.value].setTransform(transform);
+  return true;
+}
+
+
 
 Quantity_Color OccScene::rgb(const int r, const int g, const int b)
 {

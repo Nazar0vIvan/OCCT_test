@@ -22,8 +22,14 @@
 #include <gp_Dir.hxx>
 #include <gp_Pnt.hxx>
 
-OccPart::OccPart(const TopoDS_Shape& shape, const gp_Trsf& transform, const Quantity_Color& color, const SelectionMode selectionMode)
-    : m_color(color), m_transform(transform), m_selectionMode(selectionMode)
+OccPart::OccPart(
+    const TopoDS_Shape& shape,
+    const gp_Trsf& transform,
+    const Quantity_Color& color,
+    const SelectionMode selectionMode)
+    : m_color(color),
+    m_transform(transform),
+    m_selectionMode(selectionMode)
 {
   createPresentation(shape);
   configureBasePresentation();
@@ -67,10 +73,6 @@ void OccPart::setTransform(const gp_Trsf& transform)
 {
   m_transform = transform;
   applyTransform();
-
-  if (m_trihedronEnabled) {
-    rebuildTrihedron();
-  }
 }
 
 OccPart::SelectionMode OccPart::selectionMode() const
@@ -104,14 +106,18 @@ void OccPart::disableTrihedron()
 
 void OccPart::createPresentation(const TopoDS_Shape& shape)
 {
-  if (shape.IsNull()) return;
+  if (shape.IsNull()) {
+    return;
+  }
 
   m_handle = new AIS_Shape(shape);
 }
 
 void OccPart::configureBasePresentation()
 {
-  if (m_handle.IsNull()) return;
+  if (m_handle.IsNull()) {
+    return;
+  }
 
   m_handle->SetDisplayMode(AIS_Shaded);
   m_handle->SetMaterial(Graphic3d_NOM_SATIN);
@@ -119,7 +125,9 @@ void OccPart::configureBasePresentation()
 
 void OccPart::configureFaceBoundary()
 {
-  if (m_handle.IsNull()) return;
+  if (m_handle.IsNull()) {
+    return;
+  }
 
   Handle(Prs3d_Drawer) drawer = m_handle->Attributes();
 
@@ -131,26 +139,32 @@ void OccPart::configureFaceBoundary()
   drawer->SetFaceBoundaryDraw(true);
 
   drawer->SetFaceBoundaryAspect(
-    new Prs3d_LineAspect(
-        Quantity_NOC_BLACK,
-        Aspect_TOL_SOLID,
-        1.5
-    )
-  );
+      new Prs3d_LineAspect(
+          Quantity_NOC_BLACK,
+          Aspect_TOL_SOLID,
+          1.5
+          )
+      );
 }
 
 void OccPart::applyColor()
 {
-  if (m_handle.IsNull()) return;
+  if (m_handle.IsNull()) {
+    return;
+  }
 
   m_handle->SetColor(m_color);
 }
 
 void OccPart::applyTransform()
 {
-  if (m_handle.IsNull()) return;
+  if (!m_handle.IsNull()) {
+    m_handle->SetLocalTransformation(m_transform);
+  }
 
-  m_handle->SetLocalTransformation(m_transform);
+  if (!m_trihedron.IsNull()) {
+    m_trihedron->SetLocalTransformation(m_transform);
+  }
 }
 
 void OccPart::rebuildTrihedron()
@@ -160,30 +174,32 @@ void OccPart::rebuildTrihedron()
     return;
   }
 
-  gp_Pnt origin(0.0, 0.0, 0.0);
-  gp_Dir xDirection(1.0, 0.0, 0.0);
-  gp_Dir zDirection(0.0, 0.0, 1.0);
+  const gp_Ax2 localPlacement(
+      gp_Pnt(0.0, 0.0, 0.0),
+      gp_Dir(0.0, 0.0, 1.0),
+      gp_Dir(1.0, 0.0, 0.0)
+      );
 
-  origin.Transform(m_transform);
-  xDirection.Transform(m_transform);
-  zDirection.Transform(m_transform);
-
-  const gp_Ax2 placement(origin, zDirection, xDirection);
-
-  Handle(Geom_Axis2Placement) axisPlacement = new Geom_Axis2Placement(placement);
+  Handle(Geom_Axis2Placement) axisPlacement =
+      new Geom_Axis2Placement(localPlacement);
 
   m_trihedron = new AIS_Trihedron(axisPlacement);
 
   configureTrihedron();
+  applyTransform();
 }
 
 void OccPart::configureTrihedron()
 {
-  if (m_trihedron.IsNull()) return;
+  if (m_trihedron.IsNull()) {
+    return;
+  }
 
   m_trihedron->SetSize(m_trihedronSize);
   m_trihedron->SetDatumDisplayMode(Prs3d_DM_Shaded);
-  m_trihedron->SetDrawArrows(true);
+
+  // Local frame without arrow heads.
+  m_trihedron->SetDrawArrows(false);
 
   Handle(Prs3d_Drawer) drawer = m_trihedron->Attributes();
 
@@ -193,8 +209,12 @@ void OccPart::configureTrihedron()
   }
 
   drawer->SetLineAspect(
-    new Prs3d_LineAspect(Quantity_NOC_BLACK, Aspect_TOL_SOLID, 1.5)
-  );
+      new Prs3d_LineAspect(
+          Quantity_NOC_BLACK,
+          Aspect_TOL_SOLID,
+          1.5
+          )
+      );
 
   Handle(Prs3d_DatumAspect) datumAspect = drawer->DatumAspect();
 
@@ -203,15 +223,20 @@ void OccPart::configureTrihedron()
     drawer->SetDatumAspect(datumAspect);
   }
 
+  // Local frame without X/Y/Z labels.
+  datumAspect->SetDrawLabels(false);
+
   datumAspect->ShadingAspect(Prs3d_DP_XAxis)->SetColor(
-    Quantity_Color(1.0, 0.0, 0.0, Quantity_TOC_RGB)
-  );
+      Quantity_Color(1.0, 0.0, 0.0, Quantity_TOC_RGB)
+      );
 
   datumAspect->ShadingAspect(Prs3d_DP_YAxis)->SetColor(
-    Quantity_Color(0.0, 0.8, 0.0, Quantity_TOC_RGB)
-  );
+      Quantity_Color(0.0, 0.8, 0.0, Quantity_TOC_RGB)
+      );
 
   datumAspect->ShadingAspect(Prs3d_DP_ZAxis)->SetColor(
-    Quantity_Color(0.0, 0.0, 1.0, Quantity_TOC_RGB)
-  );
+      Quantity_Color(0.0, 0.0, 1.0, Quantity_TOC_RGB)
+      );
+
+  m_trihedron->SetToUpdate();
 }

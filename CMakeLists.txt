@@ -24,28 +24,39 @@ find_package(OpenCASCADE REQUIRED)
 
 qt_add_executable(appOCCT_test
   qml/main.cpp
-  src/occcontroller.cpp
-  src/occcontroller.h
-  src/occviewwindow.cpp
-  src/occviewwindow.h
-  src/occworldaxes.h
-  src/occworldaxes.cpp
-  src/occscene.h
-  src/occscene.cpp
-  src/occviewer.h
-  src/occviewer.cpp
-  src/occviewcube.h
-  src/occviewcube.cpp
-  src/occviewport.h
-  src/occviewport.cpp
-  src/occpart.h
-  src/occpart.cpp
-  src/stepimporter.h
-  src/stepimporter.cpp
-  src/occinputcontroller.h
-  src/occinputcontroller.cpp
-  src/cachedshapeloader.h
-  src/cachedshapeloader.cpp
+  src/3d/occcontroller.cpp
+  src/3d/occcontroller.h
+  src/3d/occviewwindow.cpp
+  src/3d/occviewwindow.h
+  src/3d/occworldaxes.h
+  src/3d/occworldaxes.cpp
+  src/3d/occscene.h
+  src/3d/occscene.cpp
+  src/3d/occviewer.h
+  src/3d/occviewer.cpp
+  src/3d/occviewcube.h
+  src/3d/occviewcube.cpp
+  src/3d/occviewport.h
+  src/3d/occviewport.cpp
+  src/3d/occpart.h
+  src/3d/occpart.cpp
+  src/3d/stepimporter.h
+  src/3d/stepimporter.cpp
+  src/3d/occinputcontroller.h
+  src/3d/occinputcontroller.cpp
+  src/3d/cachedshapeloader.h
+  src/3d/cachedshapeloader.cpp
+  src/robot/robottypes.h
+  src/robot/model/linkmodel.h
+  src/robot/model/jointmodel.h
+  src/robot/model/robotmodel.h
+  src/robot/model/robotstate.h
+  src/robot/kinematics/robotframes.h
+  src/robot/kinematics/forwardkinematics.h
+  src/robot/kinematics/forwardkinematics.cpp
+  src/robot//visualization/robotvisualmodel.h
+  src/robot/visualization/robotsceneadapter.h
+  src/robot/visualization/robotsceneadapter.cpp
 )
 
 qt_add_qml_module(appOCCT_test

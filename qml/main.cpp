@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QtQml/qqml.h>
 
-#include "occcontroller.h"
+#include "3d/occcontroller.h"
 
 #include <Font_FontMgr.hxx>
 
