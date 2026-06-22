@@ -156,8 +156,14 @@ bool OccScene::loadStaticScene()
   ok = addShapePart(tableShape, trf_table) && ok;
 
   // ---------------------------------------------------------------------------
-  //
+  // ROLLER
   // ---------------------------------------------------------------------------
+
+  const V3d ur(0.999349, -0.036055, 0.000879);
+  const V3d Cr(926.290032, -59.007181, 623.760314); // A point on the axis (near the data “middle”)
+  const double Rr = 20.043646;
+
+
 
   /*
   TopoDS_Shape boxShape =
