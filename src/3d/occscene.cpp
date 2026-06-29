@@ -166,11 +166,11 @@ bool OccScene::displayPart(OccPart& part)
 
   if (!part.isValid()) return false;
 
-  const int selectionMode = part.selectionMode() == OccPart::SelectionMode::None ? -1 : 0;
+  const int selectionMode = part.selectionMode() == OccSelectionMode::None ? -1 : 0;
 
   m_context->Display(part.handle(), AIS_Shaded, selectionMode, false);
 
-  if (part.selectionMode() == OccPart::SelectionMode::All) {
+  if (part.selectionMode() == OccSelectionMode::All) {
     activateAllSelectionModes(part);
   }
 
@@ -255,11 +255,7 @@ std::optional<OccScene::PartId> OccScene::addShapePartWithId(const TopoDS_Shape&
     return std::nullopt;
   }
 
-  OccPart part(shape, options.transform, options.color, options.selectionMode );
-
-  if (options.showTrihedron) {
-    part.enableTrihedron(options.trihedronSize);
-  }
+  OccPart part(shape, options);
 
   if (!part.isValid()) {
     qWarning() << "Cannot add OCCT shape part: AIS presentation was not created";

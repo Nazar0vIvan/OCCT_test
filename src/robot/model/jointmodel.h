@@ -15,14 +15,9 @@ enum class JointType
 struct JointModel
 {
   std::string name;
-
   JointType type = JointType::RevoluteZ;
 
-  // T_parentLink_joint at q = 0.
-  Transform parentLinkToJoint = identityTransform();
-
-  // T_joint_childLink at q = 0.
-  Transform jointToChildLink = identityTransform();
+  Transform Ti = identityTransform(); // transform from current i-th JCS to the previous (i-1)-th JSC
 
   double qMin = -std::numeric_limits<double>::infinity();
   double qMax =  std::numeric_limits<double>::infinity();

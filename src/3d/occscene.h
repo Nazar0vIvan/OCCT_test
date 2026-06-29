@@ -5,13 +5,11 @@
 #include "occviewcube.h"
 #include "occworldaxes.h"
 
-#include <QString>
-
 #include <Standard_Handle.hxx>
-
 #include <Quantity_Color.hxx>
-
 #include <gp_Trsf.hxx>
+
+#include <QString>
 
 #include <cstddef>
 #include <optional>
@@ -20,15 +18,6 @@
 class AIS_InteractiveContext;
 class V3d_View;
 class TopoDS_Shape;
-
-struct OccPartOptions
-{
-  gp_Trsf transform;
-  Quantity_Color color =  Quantity_Color(0.72, 0.76, 0.80, Quantity_TOC_RGB);
-  OccPart::SelectionMode selectionMode =  OccPart::SelectionMode::None;
-  bool showTrihedron = false;
-  double trihedronSize = 60.0;
-};
 
 class OccScene final
 {

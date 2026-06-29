@@ -32,6 +32,7 @@ qt_add_executable(appOCCT_test
   src/3d/occworldaxes.cpp
   src/3d/occscene.h
   src/3d/occscene.cpp
+  src/3d/occutils.h
   src/3d/occviewer.h
   src/3d/occviewer.cpp
   src/3d/occviewcube.h
@@ -47,7 +48,7 @@ qt_add_executable(appOCCT_test
   src/3d/cachedshapeloader.h
   src/3d/cachedshapeloader.cpp
   src/robot/robottypes.h
-  src/robot/model/linkmodel.h
+
   src/robot/model/jointmodel.h
   src/robot/model/robotmodel.h
   src/robot/model/robotstate.h
@@ -64,8 +65,6 @@ qt_add_qml_module(appOCCT_test
   VERSION 1.0
   QML_FILES
     qml/Main.qml
-    SOURCES src/3d/occutils.h
-    SOURCES
 )
 
 target_compile_definitions(appOCCT_test PRIVATE

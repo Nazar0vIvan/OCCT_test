@@ -15,27 +15,6 @@
 
 namespace robot {
 
-struct ScenePartId
-{
-  std::size_t value = 0;
-};
-
-struct RgbColor
-{
-  double r = 0.72;
-  double g = 0.76;
-  double b = 0.80;
-};
-
-struct ScenePartOptions
-{
-  Transform transform = identityTransform();
-  RgbColor color;
-  bool showFrame = false;
-  double frameSize = 60.0;
-};
-
-
 class RobotSceneAdapter final
 {
 public:
