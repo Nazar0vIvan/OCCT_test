@@ -3,7 +3,7 @@
 #include <AIS_Line.hxx>
 #include <Geom_CartesianPoint.hxx>
 
-class OccWorldAxes
+class OccWorldAxes final
 {
 public:
   explicit OccWorldAxes(double initialLength = 10.0);
@@ -20,8 +20,6 @@ public:
 private:
   void createAxes(double initialLength);
   void configureAxes();
-
-  static Quantity_Color rgb(int r, int g, int b);
 
 private:
   double m_length = 10.0;

@@ -41,15 +41,8 @@ private:
   QString stepPathFor(const QString& stpFileName) const;
   QString brepPathFor(const QString& stpFileName) const;
 
-  bool loadBRep(
-    const QString& filePath,
-    TopoDS_Shape& shape
-  ) const;
-
-  bool saveBRep(
-    const QString& filePath,
-    const TopoDS_Shape& shape
-  ) const;
+  bool loadBRep(const QString& filePath, TopoDS_Shape& shape) const;
+  bool saveBRep(const QString& filePath, const TopoDS_Shape& shape) const;
 
   static QByteArray toNativePathBytes(const QString& filePath);
 

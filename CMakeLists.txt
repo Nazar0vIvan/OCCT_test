@@ -64,6 +64,8 @@ qt_add_qml_module(appOCCT_test
   VERSION 1.0
   QML_FILES
     qml/Main.qml
+    SOURCES src/3d/occutils.h
+    SOURCES
 )
 
 target_compile_definitions(appOCCT_test PRIVATE

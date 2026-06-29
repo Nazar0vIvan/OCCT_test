@@ -2,7 +2,7 @@
 
 #include <AIS_ViewCube.hxx>
 
-class OccViewCube
+class OccViewCube final
 {
 public:
   OccViewCube();

@@ -9,22 +9,13 @@
 
 #include <gp_Trsf.hxx>
 
+#include "occutils.h"
+
 class OccPart final
 {
 public:
-  enum class SelectionMode
-  {
-    PartOnly,
-    All,
-    None
-  };
 
-  explicit OccPart(
-      const TopoDS_Shape& shape,
-      const gp_Trsf& transform = gp_Trsf(),
-      const Quantity_Color& color = Quantity_Color(0.72, 0.76, 0.80, Quantity_TOC_RGB),
-      SelectionMode selectionMode = SelectionMode::PartOnly
-      );
+  explicit OccPart(const TopoDS_Shape& shape, const OccPartOptions& options);
 
   ~OccPart() = default;
 
@@ -45,8 +36,8 @@ public:
   [[nodiscard]] const gp_Trsf& transform() const;
   void setTransform(const gp_Trsf& transform);
 
-  [[nodiscard]] SelectionMode selectionMode() const;
-  void setSelectionMode(SelectionMode selectionMode);
+  [[nodiscard]] OccSelectionMode selectionMode() const;
+  void setSelectionMode(OccSelectionMode selectionMode);
 
   [[nodiscard]] bool hasTrihedron() const;
   void enableTrihedron(double size = 20.0);
@@ -70,7 +61,7 @@ private:
   Quantity_Color m_color;
   gp_Trsf m_transform;
 
-  SelectionMode m_selectionMode = SelectionMode::None;
+  OccSelectionMode m_selectionMode;
 
   bool m_trihedronEnabled = false;
   double m_trihedronSize = 20.0;

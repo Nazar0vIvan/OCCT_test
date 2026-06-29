@@ -1,5 +1,4 @@
 #include "occviewwindow.h"
-
 #include "occviewport.h"
 
 #include <QExposeEvent>

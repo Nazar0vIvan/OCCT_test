@@ -1,7 +1,10 @@
 #pragma once
 
+#include <QByteArray>
 #include <QString>
 #include <TopoDS_Shape.hxx>
+
+#include <IFSelect_ReturnStatus.hxx>
 
 struct CadImportResult
 {
@@ -42,5 +45,5 @@ public:
 
 private:
   static QByteArray toNativePathBytes(const QString& filePath);
-  static QString statusToString(int status);
+  static QString statusToString(IFSelect_ReturnStatus status);
 };

@@ -6,9 +6,9 @@
 
 #include <V3d_View.hxx>
 
-OccInputController::OccInputController(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view)
-  : m_context(context),
-    m_view(view)
+#include <cmath>
+
+OccInputController::OccInputController(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view) : m_context(context), m_view(view)
 {}
 
 bool OccInputController::isValid() const
@@ -67,51 +67,32 @@ OccInputResult OccInputController::mouseRelease(const Qt::MouseButton button)
 OccInputResult OccInputController::wheel(const QPoint& pos, const int angleDeltaY)
 {
   if (!isValid()) return {};
-
   if (angleDeltaY == 0) return {};
 
-  if (angleDeltaY > 0) {
-    m_view->Zoom(
-      pos.x(),
-      pos.y(),
-      pos.x() + 10,
-      pos.y() + 10
-    );
-  } else {
-    m_view->Zoom(
-      pos.x(),
-      pos.y(),
-      pos.x() - 10,
-      pos.y() - 10
-    );
-  }
+  // One standard wheel notch = 120 units. Scale pixel offset proportionally.
+  constexpr double kNotch = 120.0;
+  constexpr double kPixelsPerNotch = 10.0;
+  const int delta = static_cast<int>(std::round((angleDeltaY / kNotch) * kPixelsPerNotch));
+
+  m_view->Zoom(pos.x(), pos.y(), pos.x() + delta, pos.y() + delta);
 
   OccInputResult result;
   result.accepted = true;
   result.needsRedraw = true;
   result.needsViewerUpdate = true;
   result.cameraChanged = true;
-
   return result;
 }
 
 OccInputResult OccInputController::handleLeftButtonPress(const QPoint& pos)
 {
-  m_context->MoveTo(
-    pos.x(),
-    pos.y(),
-    m_view,
-    true
-  );
+  m_context->MoveTo(pos.x(), pos.y(), m_view, true);
+  if (!m_context->HasDetected()) return clearSelection();
 
-  if (!m_context->HasDetected()) {
-    return clearSelection();
-  }
-
+  // Single DownCast; result forwarded to avoid re-querying context
   Handle(AIS_ViewCubeOwner) cubeOwner = Handle(AIS_ViewCubeOwner)::DownCast(m_context->DetectedOwner());
-
   if (!cubeOwner.IsNull()) {
-    return handleDetectedViewCubeOwner();
+    return handleDetectedViewCubeOwner(cubeOwner);
   }
 
   return handleDetectedSelectable();
@@ -146,12 +127,12 @@ OccInputResult OccInputController::handleMiddleButtonPress(const QPoint& pos)
 OccInputResult OccInputController::handleRotationMove(const QPoint& pos)
 {
   m_view->Rotation(pos.x(), pos.y());
+  m_lastMousePos = pos;  // keep position current so pan-after-rotate has no jump
 
   OccInputResult result;
-  result.accepted = true;
-  result.needsRedraw = true;
+  result.accepted      = true;
+  result.needsRedraw   = true;
   result.cameraChanged = true;
-
   return result;
 }
 
@@ -187,23 +168,17 @@ OccInputResult OccInputController::handleHoverMove(const QPoint& pos)
   return result;
 }
 
-OccInputResult OccInputController::handleDetectedViewCubeOwner()
+OccInputResult OccInputController::handleDetectedViewCubeOwner(const Handle(AIS_ViewCubeOwner)& cubeOwner)
 {
-  Handle(AIS_ViewCubeOwner) cubeOwner = Handle(AIS_ViewCubeOwner)::DownCast(m_context->DetectedOwner());
-
-  if (cubeOwner.IsNull()) {
-    return {};
-  }
-
+  // cubeOwner is already validated by the caller; no re-cast needed
   m_view->SetProj(cubeOwner->MainOrientation());
   m_view->ZFitAll();
 
   OccInputResult result;
-  result.accepted = true;
-  result.needsRedraw = true;
+  result.accepted          = true;
+  result.needsRedraw       = true;
   result.needsViewerUpdate = true;
-  result.cameraChanged = true;
-
+  result.cameraChanged     = true;
   return result;
 }
 

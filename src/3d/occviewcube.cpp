@@ -1,6 +1,5 @@
 #include "occviewcube.h"
-
-#include <algorithm>
+#include "occutils.h"
 
 #include <AIS_DisplayMode.hxx>
 #include <AIS_ViewCube.hxx>
@@ -21,19 +20,6 @@
 #include <Quantity_NameOfColor.hxx>
 
 #include <V3d_TypeOfOrientation.hxx>
-
-namespace
-{
-  Quantity_Color rgb(const int r, const int g, const int b)
-  {
-    return Quantity_Color(
-      static_cast<double>(std::clamp(r, 0, 255)) / 255.0,
-      static_cast<double>(std::clamp(g, 0, 255)) / 255.0,
-      static_cast<double>(std::clamp(b, 0, 255)) / 255.0,
-      Quantity_TOC_RGB
-    );
-  }
-}
 
 OccViewCube::OccViewCube() : m_cube(new AIS_ViewCube())
 {
@@ -76,8 +62,8 @@ void OccViewCube::configureStyle()
 
   m_cube->SetSize(50.0, false);
 
-  m_cube->SetBoxColor(rgb(200, 200, 230));
-  m_cube->SetInnerColor(rgb(0, 0, 0));
+  m_cube->SetBoxColor(OccUtils::rgb(200, 200, 230));
+  m_cube->SetInnerColor(OccUtils::rgb(0, 0, 0));
   m_cube->SetBoxTransparency(0.0);
 
   if (!m_cube->Attributes().IsNull()) {
@@ -99,7 +85,7 @@ void OccViewCube::configureStyle()
   Handle(Prs3d_Drawer) hoverStyle = m_cube->DynamicHilightAttributes();
 
   if (!hoverStyle.IsNull()) {
-    const Quantity_Color hoverColor = rgb(102, 179, 204);
+    const Quantity_Color hoverColor = OccUtils::rgb(102, 179, 204);
 
     hoverStyle->SetColor(hoverColor);
     hoverStyle->SetDisplayMode(AIS_Shaded);
@@ -134,11 +120,11 @@ void OccViewCube::configureEdgesAndCorners()
   m_cube->SetBoxFacetExtension(12.0);
 
   if (!m_cube->BoxEdgeStyle().IsNull()) {
-    m_cube->BoxEdgeStyle()->SetColor(rgb(150, 150, 180));
+    m_cube->BoxEdgeStyle()->SetColor(OccUtils::rgb(150, 150, 180));
   }
 
   if (!m_cube->BoxCornerStyle().IsNull()) {
-    m_cube->BoxCornerStyle()->SetColor(rgb(120, 120, 150));
+    m_cube->BoxCornerStyle()->SetColor(OccUtils::rgb(120, 120, 150));
   }
 }
 
@@ -168,9 +154,9 @@ void OccViewCube::configureAxes()
     drawer->SetDatumAspect(datumAspect);
   }
 
-  datumAspect->ShadingAspect(Prs3d_DP_XAxis)->SetColor(rgb(255, 0, 0));
-  datumAspect->ShadingAspect(Prs3d_DP_YAxis)->SetColor(rgb(0, 255, 0));
-  datumAspect->ShadingAspect(Prs3d_DP_ZAxis)->SetColor(rgb(0, 0, 255));
+  datumAspect->ShadingAspect(Prs3d_DP_XAxis)->SetColor(OccUtils::rgb(255, 0, 0));
+  datumAspect->ShadingAspect(Prs3d_DP_YAxis)->SetColor(OccUtils::rgb(0, 255, 0));
+  datumAspect->ShadingAspect(Prs3d_DP_ZAxis)->SetColor(OccUtils::rgb(0, 0, 255));
 }
 
 void OccViewCube::configureTransformPersistence()

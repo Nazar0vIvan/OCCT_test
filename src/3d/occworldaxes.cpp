@@ -1,4 +1,5 @@
 #include "occworldaxes.h"
+#include "occutils.h"
 
 #include <AIS_Line.hxx>
 
@@ -32,9 +33,7 @@ double OccWorldAxes::length() const
 
 void OccWorldAxes::setLength(const double length)
 {
-  if (length <= 0.0) {
-    return;
-  }
+  if (length <= 0.0) return;
 
   m_length = length;
 
@@ -83,9 +82,9 @@ void OccWorldAxes::configureAxes()
 
   constexpr double width = 2.0;
 
-  m_xAxis->SetColor(rgb(255, 0, 0));
-  m_yAxis->SetColor(rgb(0, 180, 0));
-  m_zAxis->SetColor(rgb(0, 0, 255));
+  m_xAxis->SetColor(OccUtils::rgb(255, 0, 0));
+  m_yAxis->SetColor(OccUtils::rgb(0, 180, 0));
+  m_zAxis->SetColor(OccUtils::rgb(0, 0, 255));
 
   m_xAxis->SetWidth(width);
   m_yAxis->SetWidth(width);
@@ -94,14 +93,4 @@ void OccWorldAxes::configureAxes()
   m_xAxis->SetZLayer(Graphic3d_ZLayerId_Topmost);
   m_yAxis->SetZLayer(Graphic3d_ZLayerId_Topmost);
   m_zAxis->SetZLayer(Graphic3d_ZLayerId_Topmost);
-}
-
-Quantity_Color OccWorldAxes::rgb(const int r, const int g, const int b)
-{
-  return Quantity_Color(
-    static_cast<double>(r) / 255.0,
-    static_cast<double>(g) / 255.0,
-    static_cast<double>(b) / 255.0,
-    Quantity_TOC_RGB
-  );
 }

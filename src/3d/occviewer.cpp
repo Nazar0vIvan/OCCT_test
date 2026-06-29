@@ -1,4 +1,5 @@
 #include "occviewer.h"
+#include "occutils.h"
 
 #include <QDebug>
 
@@ -24,18 +25,13 @@
 
 #include <WNT_Window.hxx>
 
-namespace
-{
-Quantity_Color rgb(const int r, const int g, const int b)
-{
-  return Quantity_Color(
-    static_cast<double>(r) / 255.0,
-    static_cast<double>(g) / 255.0,
-    static_cast<double>(b) / 255.0,
-    Quantity_TOC_RGB
-  );
-}
-}
+#if defined(Q_OS_WIN)
+  #include <WNT_Window.hxx>
+#elif defined(Q_OS_LINUX)
+  #include <Xw_Window.hxx>
+#elif defined(Q_OS_MACOS)
+  #include <Cocoa_Window.hxx>
+#endif
 
 OccViewer::OccViewer(const Aspect_Handle nativeWindowHandle)
 {
@@ -136,10 +132,20 @@ void OccViewer::createView(const Aspect_Handle nativeWindowHandle)
   if (m_viewer.IsNull()) return;
 
   m_view = m_viewer->CreateView();
-
   if (m_view.IsNull()) return;
 
+#if defined(Q_OS_WIN)
   m_window = new WNT_Window(nativeWindowHandle);
+#elif defined(Q_OS_LINUX)
+  const auto xWindow = static_cast<Window>(reinterpret_cast<std::uintptr_t>(nativeWindowHandle));
+  m_window = new Xw_Window(m_displayConnection, xWindow);
+#elif defined(Q_OS_MACOS)
+  m_window = new Cocoa_Window(nativeWindowHandle);
+#else
+#error Unsupported platform for OccViewer
+#endif
+
+  if (m_window.IsNull()) return;
 
   m_view->SetWindow(m_window);
 
@@ -197,7 +203,7 @@ void OccViewer::configureHighlightStyles()
   Handle(Prs3d_Drawer) hoverStyle = m_context->HighlightStyle(Prs3d_TypeOfHighlight_LocalDynamic);
 
   if (!hoverStyle.IsNull()) {
-    hoverStyle->SetColor(rgb(102, 179, 204));
+    hoverStyle->SetColor(OccUtils::rgb(102, 179, 204));
     hoverStyle->SetDisplayMode(AIS_Shaded);
     hoverStyle->SetFaceBoundaryDraw(false);
     hoverStyle->SetZLayer(Graphic3d_ZLayerId_Top);
@@ -206,7 +212,7 @@ void OccViewer::configureHighlightStyles()
   Handle(Prs3d_Drawer) selectionStyle = m_context->HighlightStyle(Prs3d_TypeOfHighlight_LocalSelected);
 
   if (!selectionStyle.IsNull()) {
-    selectionStyle->SetColor(rgb(0, 128, 255));
+    selectionStyle->SetColor(OccUtils::rgb(0, 128, 255));
     selectionStyle->SetDisplayMode(AIS_Shaded);
     selectionStyle->SetFaceBoundaryDraw(false);
     selectionStyle->SetZLayer(Graphic3d_ZLayerId_Top);

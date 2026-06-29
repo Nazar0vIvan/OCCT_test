@@ -41,10 +41,6 @@ private:
   void applyInputResult(const OccInputResult& result);
 
 private:
-  // Declaration order is important.
-  //
-  // OccViewer must be constructed first because OccScene and OccInputController
-  // receive handles from it.
   OccViewer m_viewer;
   OccScene m_scene;
   OccInputController m_input;

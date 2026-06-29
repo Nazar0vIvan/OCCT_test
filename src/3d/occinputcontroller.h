@@ -5,6 +5,8 @@
 
 #include <Standard_Handle.hxx>
 
+class AIS_ViewCubeOwner;
+
 struct OccInputResult
 {
   bool accepted = false;
@@ -18,7 +20,7 @@ struct OccInputResult
 class AIS_InteractiveContext;
 class V3d_View;
 
-class OccInputController
+class OccInputController final
 {
 public:
   OccInputController(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view);
@@ -39,7 +41,7 @@ private:
   OccInputResult handlePanMove(const QPoint& pos);
   OccInputResult handleHoverMove(const QPoint& pos);
 
-  OccInputResult handleDetectedViewCubeOwner();
+  OccInputResult handleDetectedViewCubeOwner(const Handle(AIS_ViewCubeOwner)& cubeOwner);
   OccInputResult handleDetectedSelectable();
   OccInputResult clearSelection();
 

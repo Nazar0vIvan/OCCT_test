@@ -7,8 +7,7 @@
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
 
-CachedShapeLoader::CachedShapeLoader(QString cadDirectory)
-  : m_cadDirectory(QDir::fromNativeSeparators(std::move(cadDirectory)))
+CachedShapeLoader::CachedShapeLoader(QString cadDirectory) : m_cadDirectory(QDir::fromNativeSeparators(std::move(cadDirectory)))
 {}
 
 CachedShapeResult CachedShapeLoader::loadStpWithCache(const QString& stpFileName) const
@@ -22,10 +21,9 @@ CachedShapeResult CachedShapeLoader::loadStpWithCache(const QString& stpFileName
   const QDir cadDir(m_cadDirectory);
 
   if (!cadDir.exists()) {
-    return CachedShapeResult::failure(
-      QStringLiteral("Cached shape loading failed: CAD directory does not exist: %1")
-          .arg(m_cadDirectory)
-      );
+    return CachedShapeResult::failure(QStringLiteral("Cached shape loading failed: CAD directory does not exist: %1")
+      .arg(m_cadDirectory)
+    );
   }
 
   const QString stepPath = stepPathFor(stpFileName);
@@ -83,30 +81,23 @@ bool CachedShapeLoader::loadBRep(const QString& filePath, TopoDS_Shape& shape) c
 {
   BRep_Builder builder;
 
-  return BRepTools::Read(
-    shape,
-    toNativePathBytes(filePath).constData(),
-    builder
-  );
+  return BRepTools::Read(shape, toNativePathBytes(filePath).constData(), builder);
 }
 
 bool CachedShapeLoader::saveBRep(const QString& filePath, const TopoDS_Shape& shape) const
 {
   if (shape.IsNull()) return false;
 
-  return BRepTools::Write(
-    shape,
-    toNativePathBytes(filePath).constData()
-  );
+  return BRepTools::Write(shape, toNativePathBytes(filePath).constData());
 }
 
 QByteArray CachedShapeLoader::toNativePathBytes(const QString& filePath)
 {
   const QString nativePath = QDir::toNativeSeparators(filePath);
 
-#ifdef Q_OS_WIN
-  return nativePath.toLocal8Bit();
-#else
-  return nativePath.toUtf8();
-#endif
+  #ifdef Q_OS_WIN
+    return nativePath.toLocal8Bit();
+  #else
+    return nativePath.toUtf8();
+  #endif
 }

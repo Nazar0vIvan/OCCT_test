@@ -13,7 +13,9 @@
 CadImportResult StepImporter::importFile(const QString& filePath) const
 {
   if (filePath.trimmed().isEmpty()) {
-    return CadImportResult::failure(QStringLiteral("STEP import failed: file path is empty"));
+    return CadImportResult::failure(
+      QStringLiteral("STEP import failed: file path is empty")
+    );
   }
 
   const QFileInfo fileInfo(filePath);
@@ -86,14 +88,15 @@ QByteArray StepImporter::toNativePathBytes(const QString& filePath)
   #endif
 }
 
-QString StepImporter::statusToString(const int status)
+QString StepImporter::statusToString(const IFSelect_ReturnStatus status)
 {
   switch (status) {
-    case IFSelect_RetVoid: return QStringLiteral("IFSelect_RetVoid");
-    case IFSelect_RetDone: return QStringLiteral("IFSelect_RetDone");
+    case IFSelect_RetVoid:  return QStringLiteral("IFSelect_RetVoid");
+    case IFSelect_RetDone:  return QStringLiteral("IFSelect_RetDone");
     case IFSelect_RetError: return QStringLiteral("IFSelect_RetError");
-    case IFSelect_RetFail: return QStringLiteral("IFSelect_RetFail");
-    case IFSelect_RetStop: return QStringLiteral("IFSelect_RetStop");
-    default: return QStringLiteral("Unknown IFSelect_ReturnStatus(%1)").arg(status);
-  }
+    case IFSelect_RetFail:  return QStringLiteral("IFSelect_RetFail");
+    case IFSelect_RetStop:  return QStringLiteral("IFSelect_RetStop");
+    }
+
+  return QStringLiteral("Unknown IFSelect_ReturnStatus(%1)").arg(static_cast<int>(status));
 }

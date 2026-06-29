@@ -20,20 +20,25 @@
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
 
+#include <Graphic3d_ZLayerId.hxx>
+
 #include <gp_Vec.hxx>
 #include <gp_Trsf.hxx>
 #include <gp_Ax1.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>
-#include <gp_Vec.hxx>
 
 #include <cmath>
 
+namespace
+{
+constexpr double PI = 3.141592653589793238462643383279502884;
+}
 
-OccScene::OccScene(const Handle(AIS_InteractiveContext)& context,const Handle(V3d_View)& view, const QString& cadDirectory)
+OccScene::OccScene(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view, const QString& cadDir)
   : m_context(context),
     m_view(view),
-    m_shapeLoader(cadDirectory),
+    m_shapeLoader(cadDir),
     m_worldAxes(currentWorldAxisLength()),
     m_viewCube()
 {}
@@ -58,172 +63,28 @@ bool OccScene::loadStaticScene()
   // ROBOT
   // ---------------------------------------------------------------------------
 
-  // 0
-  ok = addStepPart(QStringLiteral("0_BASE.stp")) && ok;
-
-  // 1
-  gp_Trsf trl1;
-  trl1.SetTranslation(gp_Vec(0.0, 0.0, 227.0));
-
-  ok = addStepPart(QStringLiteral("1_ROTATING_COLUMN.stp"), trl1) && ok;
-
-  // 2
-  gp_Trsf rotX2;
-  rotX2.SetRotation(
-    gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(1.0, 0.0, 0.0)), -M_PI / 2.0);
-  gp_Trsf trl2;
-  trl2.SetTranslation(
-    gp_Vec(150.0, -90.4, 450.0)
-  );
-
-  gp_Trsf trf2 = trl2 * rotX2;
-
-  ok = addStepPart(QStringLiteral("2_LINK_ARM.stp"), trf2) && ok;
-
-  // 3
-  gp_Trsf rot3X;
-  rot3X.SetRotation(
-    gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(1.0, 0.0, 0.0)), -M_PI / 2.0);
-
-  gp_Trsf rot3Y;
-  rot3Y.SetRotation(
-      gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(0.0, 1.0, 0.0)), M_PI / 2.0);
-
-  gp_Trsf trl3;
-  trl3.SetTranslation(gp_Vec(150.0, -101.5, 1060));
-
-  gp_Trsf trf3 = trl3 * rot3Y * rot3X;
-  ok = addStepPart(QStringLiteral("3_IN-LINE_WRIST.stp"), trf3) && ok;
-
-  // 4
-  gp_Trsf rot4Y;
-  rot4Y.SetRotation(
-    gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(0.0, 1.0, 0.0)), -M_PI / 2.0);
-
-  gp_Trsf rot4X;
-  rot4X.SetRotation(
-      gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(1.0, 0.0, 0.0)), M_PI);
-
-  gp_Trsf trl4;
-  trl4.SetTranslation(gp_Vec(507.0, 0.0, 1080.0));
-
-  gp_Trsf trf4 = trl4 * rot4X * rot4Y;
-
-  ok = addStepPart(QStringLiteral("4_WRIST1.stp"), trf4) && ok;
-
-  // 5
-  gp_Trsf rot5Y;
-  rot5Y.SetRotation(
-    gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(0.0, 1.0, 0.0)), M_PI / 2.0);
-
-  gp_Trsf rot5Z;
-  rot5Z.SetRotation(
-      gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(0.0, 0.0, 1.0)), M_PI / 2.0);
-
-  gp_Trsf trl5;
-  trl5.SetTranslation(gp_Vec(810.0, 39.0, 1080));
-
-  gp_Trsf trf5 = trl5 * rot5Z * rot5Y;
-
-  ok = addStepPart(QStringLiteral("5_WRIST2.stp"), trf5) && ok;
-
-  // 6
-  gp_Trsf rot6Y;
-  rot6Y.SetRotation(
-    gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(0.0, 1.0, 0.0)), -M_PI / 2.0);
-
-  gp_Trsf rot6X;
-  rot6X.SetRotation(
-      gp_Ax1(gp_Pnt(0.0, 0.0, 0.0), gp_Dir(1.0, 0.0, 0.0)), M_PI);
-
-  gp_Trsf trl6;
-  trl6.SetTranslation(gp_Vec(890.0, 0, 1080));
-
-  gp_Trsf trf6 = trl6 * rot6X * rot6Y;
-
-  ok = addStepPart(QStringLiteral("6_WRIST3.stp"), trf6) && ok;
-
   // ---------------------------------------------------------------------------
   // TABLE
   // ---------------------------------------------------------------------------
 
   TopoDS_Shape tableShape = BRepPrimAPI_MakeBox(740.0, 940.0, 20.0).Shape();
 
+  OccPartOptions tableOptions;
+  tableOptions.transform.SetTranslation(gp_Vec(900.0, -470.0, 255.0));
 
-  gp_Trsf trf_table;
-  trf_table.SetTranslation(gp_Vec(900.0, -470.0, 255.0));
-
-  ok = addShapePart(tableShape, trf_table) && ok;
+  ok &= addShapePartWithId(tableShape, tableOptions).has_value();
 
   // ---------------------------------------------------------------------------
   // ROLLER
   // ---------------------------------------------------------------------------
 
-  const V3d ur(0.999349, -0.036055, 0.000879);
-  const V3d Cr(926.290032, -59.007181, 623.760314); // A point on the axis (near the data “middle”)
-  const double Rr = 20.043646;
-
-
-
-  /*
-  TopoDS_Shape boxShape =
-    BRepPrimAPI_MakeBox(100.0, 50.0, 30.0).Shape();
-
-  gp_Trsf boxTransform;
-  boxTransform.SetTranslation(gp_Vec(150.0, 0.0, 0.0));
-
-  ok = addShapePart(
-    boxShape,
-    rgb(210, 150, 90),
-    boxTransform
-  ) && ok;
-  */
-
-  /*
-  TopoDS_Shape sphereShape =
-    BRepPrimAPI_MakeSphere(25.0).Shape();
-
-  gp_Trsf sphereTransform;
-  sphereTransform.SetTranslation(gp_Vec(0.0, 120.0, 0.0));
-
-  ok = addShapePart(
-    sphereShape,
-    rgb(90, 130, 220),
-    sphereTransform
-  ) && ok;
-  */
+  // const V3d ur(0.999349, -0.036055, 0.000879);
+  // const V3d Cr(926.290032, -59.007181, 623.760314); // A point on the axis (near the data “middle”)
+  // const double Rr = 20.043646;
 
   m_context->UpdateCurrentViewer();
 
   return ok;
-}
-
-bool OccScene::addStepPart(
-    const QString& stpFileName,
-    const gp_Trsf& transform,
-    const Quantity_Color& color,
-    OccPart::SelectionMode selectionMode)
-{
-  return addStepPartWithId(
-             stpFileName,
-             transform,
-             color,
-             selectionMode
-             ).has_value();
-}
-
-bool OccScene::addShapePart(
-    const TopoDS_Shape& shape,
-    const gp_Trsf& transform,
-    const Quantity_Color& color,
-    const OccPart::SelectionMode selectionMode)
-{
-  return addShapePartWithId(
-             shape,
-             transform,
-             color,
-             selectionMode
-             ).has_value();
 }
 
 void OccScene::updateCameraDependentObjects()
@@ -262,7 +123,6 @@ void OccScene::displayWorldAxes()
   m_context->Display(m_worldAxes.yAxis(), false);
   m_context->Display(m_worldAxes.zAxis(), false);
 
-  // Passive reference axes: not selectable.
   m_context->Deactivate(m_worldAxes.xAxis());
   m_context->Deactivate(m_worldAxes.yAxis());
   m_context->Deactivate(m_worldAxes.zAxis());
@@ -302,23 +162,13 @@ void OccScene::displayViewCube()
 
 bool OccScene::displayPart(OccPart& part)
 {
-  if (!isValid()) {
-    return false;
-  }
+  if (!isValid()) return false;
 
-  if (!part.isValid()) {
-    return false;
-  }
+  if (!part.isValid()) return false;
 
-  const int selectionMode =
-      part.selectionMode() == OccPart::SelectionMode::None ? -1 : 0;
+  const int selectionMode = part.selectionMode() == OccPart::SelectionMode::None ? -1 : 0;
 
-  m_context->Display(
-      part.handle(),
-      AIS_Shaded,
-      selectionMode,
-      false
-      );
+  m_context->Display(part.handle(), AIS_Shaded, selectionMode, false);
 
   if (part.selectionMode() == OccPart::SelectionMode::All) {
     activateAllSelectionModes(part);
@@ -376,13 +226,7 @@ double OccScene::currentWorldAxisLength() const
   return cameraScale * 0.05;
 }
 
-std::optional<OccScene::PartId> OccScene::addStepPartWithId(
-    const QString& stpFileName,
-    const gp_Trsf& transform,
-    const Quantity_Color& color,
-    OccPart::SelectionMode selectionMode,
-    const bool showTrihedron,
-    const double trihedronSize)
+std::optional<OccScene::PartId> OccScene::addStepPartWithId(const QString& stpFileName, const OccPartOptions& options)
 {
   if (!isValid()) {
     qWarning() << "Cannot add STEP part: context or view is null";
@@ -396,23 +240,10 @@ std::optional<OccScene::PartId> OccScene::addStepPartWithId(
     return std::nullopt;
   }
 
-  return addShapePartWithId(
-      result.shape,
-      transform,
-      color,
-      selectionMode,
-      showTrihedron,
-      trihedronSize
-      );
+  return addShapePartWithId(result.shape, options);
 }
 
-std::optional<OccScene::PartId> OccScene::addShapePartWithId(
-    const TopoDS_Shape& shape,
-    const gp_Trsf& transform,
-    const Quantity_Color& color,
-    const OccPart::SelectionMode selectionMode,
-    const bool showTrihedron,
-    const double trihedronSize)
+std::optional<OccScene::PartId> OccScene::addShapePartWithId(const TopoDS_Shape& shape, const OccPartOptions& options)
 {
   if (!isValid()) {
     qWarning() << "Cannot add OCCT shape part: context or view is null";
@@ -424,10 +255,10 @@ std::optional<OccScene::PartId> OccScene::addShapePartWithId(
     return std::nullopt;
   }
 
-  OccPart part(shape, transform, color, selectionMode);
+  OccPart part(shape, options.transform, options.color, options.selectionMode );
 
-  if (showTrihedron) {
-    part.enableTrihedron(trihedronSize);
+  if (options.showTrihedron) {
+    part.enableTrihedron(options.trihedronSize);
   }
 
   if (!part.isValid()) {
@@ -456,14 +287,9 @@ bool OccScene::setPartTransform(const PartId id, const gp_Trsf& transform)
   return true;
 }
 
-
-
-Quantity_Color OccScene::rgb(const int r, const int g, const int b)
+void OccScene::updateViewer()
 {
-  return Quantity_Color(
-    static_cast<double>(r) / 255.0,
-    static_cast<double>(g) / 255.0,
-    static_cast<double>(b) / 255.0,
-    Quantity_TOC_RGB
-  );
+  if (!m_context.IsNull()) {
+    m_context->UpdateCurrentViewer();
+  }
 }

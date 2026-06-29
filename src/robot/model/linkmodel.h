@@ -4,9 +4,9 @@
 
 namespace robot {
 
-  struct LinkModel
-  {
-    std::string name;
-  };
+struct LinkModel
+{
+  std::string name;
+};
 
 }

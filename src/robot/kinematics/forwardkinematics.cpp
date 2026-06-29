@@ -6,9 +6,7 @@
 namespace robot
 {
 
-RobotFrames ForwardKinematics::solve(
-    const RobotModel& model,
-    const RobotState& state) const
+RobotFrames ForwardKinematics::solve(const RobotModel& model, const RobotState& state) const
 {
   RobotFrames frames;
 
@@ -38,8 +36,7 @@ RobotFrames ForwardKinematics::solve(
     frames.baseToLink[i + 1] = acc;
   }
 
-  frames.baseToFlange =
-      multiply(frames.baseToLink[RobotDof], model.link6ToFlange);
+  frames.baseToFlange = multiply(frames.baseToLink[RobotDof], model.link6ToFlange);
 
   return frames;
 }

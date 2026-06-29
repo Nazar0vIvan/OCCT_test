@@ -21,6 +21,15 @@ class AIS_InteractiveContext;
 class V3d_View;
 class TopoDS_Shape;
 
+struct OccPartOptions
+{
+  gp_Trsf transform;
+  Quantity_Color color =  Quantity_Color(0.72, 0.76, 0.80, Quantity_TOC_RGB);
+  OccPart::SelectionMode selectionMode =  OccPart::SelectionMode::None;
+  bool showTrihedron = false;
+  double trihedronSize = 60.0;
+};
+
 class OccScene final
 {
 public:
@@ -30,11 +39,7 @@ public:
   };
 
 public:
-  OccScene(
-      const Handle(AIS_InteractiveContext)& context,
-      const Handle(V3d_View)& view,
-      const QString& cadDirectory
-      );
+  OccScene(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view, const QString& cadDir);
 
   ~OccScene() = default;
 
@@ -48,38 +53,8 @@ public:
 
   bool loadStaticScene();
 
-  bool addStepPart(
-      const QString& stpFileName,
-      const gp_Trsf& transform = gp_Trsf(),
-      const Quantity_Color& color = Quantity_Color(0.72, 0.76, 0.80, Quantity_TOC_RGB),
-      OccPart::SelectionMode selectionMode = OccPart::SelectionMode::None
-      );
-
-  bool addShapePart(
-      const TopoDS_Shape& shape,
-      const gp_Trsf& transform = gp_Trsf(),
-      const Quantity_Color& color = Quantity_Color(0.72, 0.76, 0.80, Quantity_TOC_RGB),
-      OccPart::SelectionMode selectionMode = OccPart::SelectionMode::None
-      );
-
-  [[nodiscard]] std::optional<PartId> addStepPartWithId(
-      const QString& stpFileName,
-      const gp_Trsf& transform = gp_Trsf(),
-      const Quantity_Color& color = Quantity_Color(0.72, 0.76, 0.80, Quantity_TOC_RGB),
-      OccPart::SelectionMode selectionMode = OccPart::SelectionMode::None,
-      bool showTrihedron = false,
-      double trihedronSize = 60.0
-      );
-
-  [[nodiscard]] std::optional<PartId> addShapePartWithId(
-      const TopoDS_Shape& shape,
-      const gp_Trsf& transform = gp_Trsf(),
-      const Quantity_Color& color = Quantity_Color(0.72, 0.76, 0.80, Quantity_TOC_RGB),
-      OccPart::SelectionMode selectionMode = OccPart::SelectionMode::None,
-      bool showTrihedron = false,
-      double trihedronSize = 60.0
-      );
-
+  [[nodiscard]] std::optional<PartId> addStepPartWithId(const QString& stpFileName, const OccPartOptions& options = {});
+  [[nodiscard]] std::optional<PartId> addShapePartWithId(const TopoDS_Shape& shape, const OccPartOptions& options = {});
   [[nodiscard]] bool setPartTransform(PartId id, const gp_Trsf& transform);
 
   void updateViewer();
@@ -97,15 +72,12 @@ private:
 
   [[nodiscard]] double currentWorldAxisLength() const;
 
-  [[nodiscard]] static Quantity_Color rgb(int r, int g, int b);
-
 private:
   Handle(AIS_InteractiveContext) m_context;
   Handle(V3d_View) m_view;
 
   CachedShapeLoader m_shapeLoader;
 
-  // Append-only. Do not erase/reorder elements if external PartId values exist.
   std::vector<OccPart> m_parts;
 
   OccWorldAxes m_worldAxes;

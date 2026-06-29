@@ -4,14 +4,14 @@
 
 namespace robot
 {
-  struct RobotModel;
-  struct RobotState;
 
-  class ForwardKinematics final
-  {
-    public:
-      [[nodiscard]] RobotFrames solve(
-          const RobotModel& model,
-          const RobotState& state) const;
-  };
+struct RobotModel;
+struct RobotState;
+
+class ForwardKinematics final
+{
+public:
+  [[nodiscard]] RobotFrames solve(const RobotModel& model, const RobotState& state) const;
+};
+
 }

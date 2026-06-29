@@ -1,15 +1,14 @@
 #pragma once
 
+#include <Aspect_Handle.hxx>
 #include <Standard_Handle.hxx>
 
-class Aspect_DisplayConnection;
-class OpenGl_GraphicDriver;
-class V3d_Viewer;
-class V3d_View;
 class AIS_InteractiveContext;
-class WNT_Window;
-
-using Aspect_Handle = void*;
+class Aspect_DisplayConnection;
+class Aspect_Window;
+class OpenGl_GraphicDriver;
+class V3d_View;
+class V3d_Viewer;
 
 class OccViewer final
 {
@@ -54,5 +53,5 @@ private:
   Handle(V3d_Viewer) m_viewer;
   Handle(AIS_InteractiveContext) m_context;
   Handle(V3d_View) m_view;
-  Handle(WNT_Window) m_window;
+  Handle(Aspect_Window) m_window;
 };

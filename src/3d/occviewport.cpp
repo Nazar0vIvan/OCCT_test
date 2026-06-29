@@ -34,35 +34,30 @@ void OccViewport::resize()
 void OccViewport::redraw()
 {
   if (!m_viewer.isValid()) return;
-
   m_viewer.redraw();
 }
 
 void OccViewport::mousePress(const QPoint& pos, const Qt::MouseButton button)
 {
   if (!isValid()) return;
-
   applyInputResult(m_input.mousePress(pos, button));
 }
 
 void OccViewport::mouseMove(const QPoint& pos)
 {
   if (!isValid()) return;
-
   applyInputResult(m_input.mouseMove(pos));
 }
 
 void OccViewport::mouseRelease(const Qt::MouseButton button)
 {
   if (!isValid()) return;
-
   applyInputResult(m_input.mouseRelease(button));
 }
 
 void OccViewport::wheel(const QPoint& pos, const int angleDeltaY)
 {
   if (!isValid()) return;
-
   applyInputResult(m_input.wheel(pos, angleDeltaY));
 }
 
@@ -80,9 +75,7 @@ void OccViewport::initializeStaticScene()
   }
 
   m_viewer.fitAll();
-
   m_scene.updateCameraDependentObjects();
-
   m_viewer.updateCurrentViewer();
   m_viewer.redraw();
 }
