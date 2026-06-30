@@ -1,24 +1,17 @@
-#include "robot/visualization/robotsceneadapter.h"
-
-#include <utility>
+#include "3d/robot/visualization/robotsceneadapter.h"
 
 #include <QDebug>
 
 namespace robot {
 
-RobotSceneAdapter::RobotSceneAdapter(std::shared_ptr<const RobotModel> model, OccScene& scene) : m_model(std::move(model)), m_scene(scene)
+RobotSceneAdapter::RobotSceneAdapter(std::shared_ptr<const RobotModel> model) : m_model(std::move(model))
 {
   if (!m_model) {
     qWarning() << "RobotSceneAdapter created with null RobotModel";
   }
 }
 
-void RobotSceneAdapter::setBaseInWorld(const Transform& baseInWorld)
-{
-  m_baseInWorld = baseInWorld;
-}
-
-bool RobotSceneAdapter::loadVisuals(const RobotVisualModel& visualModel)
+bool RobotSceneAdapter::load(const RobotModel& visualModel)
 {
   if (!m_model) {
     qWarning() << "Cannot load robot visuals: RobotModel is null";

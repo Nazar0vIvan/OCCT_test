@@ -24,40 +24,46 @@ find_package(OpenCASCADE REQUIRED)
 
 qt_add_executable(appOCCT_test
   qml/main.cpp
-  src/3d/occcontroller.cpp
-  src/3d/occcontroller.h
-  src/3d/occviewwindow.cpp
-  src/3d/occviewwindow.h
-  src/3d/occworldaxes.h
-  src/3d/occworldaxes.cpp
-  src/3d/occscene.h
-  src/3d/occscene.cpp
-  src/3d/occutils.h
-  src/3d/occviewer.h
-  src/3d/occviewer.cpp
-  src/3d/occviewcube.h
-  src/3d/occviewcube.cpp
-  src/3d/occviewport.h
-  src/3d/occviewport.cpp
-  src/3d/occpart.h
-  src/3d/occpart.cpp
-  src/3d/stepimporter.h
-  src/3d/stepimporter.cpp
-  src/3d/occinputcontroller.h
-  src/3d/occinputcontroller.cpp
-  src/3d/cachedshapeloader.h
-  src/3d/cachedshapeloader.cpp
-  src/robot/robottypes.h
 
-  src/robot/model/jointmodel.h
-  src/robot/model/robotmodel.h
-  src/robot/model/robotstate.h
-  src/robot/kinematics/robotframes.h
-  src/robot/kinematics/forwardkinematics.h
-  src/robot/kinematics/forwardkinematics.cpp
-  src/robot//visualization/robotvisualmodel.h
-  src/robot/visualization/robotsceneadapter.h
-  src/robot/visualization/robotsceneadapter.cpp
+  src/3d/mathtypes.h
+
+  src/3d/occt/occcontroller.cpp
+  src/3d/occt/occcontroller.h
+  src/3d/occt/occviewwindow.cpp
+  src/3d/occt/occviewwindow.h
+  src/3d/occt/occworldaxes.h
+  src/3d/occt/occworldaxes.cpp
+  src/3d/occt/occscene.h
+  src/3d/occt/occscene.cpp
+  src/3d/occt/occutils.h
+  src/3d/occt/occviewer.h
+  src/3d/occt/occviewer.cpp
+  src/3d/occt/occviewcube.h
+  src/3d/occt/occviewcube.cpp
+  src/3d/occt/occviewport.h
+  src/3d/occt/occviewport.cpp
+  src/3d/occt/occpart.h
+  src/3d/occt/occpart.cpp
+  src/3d/occt/stepimporter.h
+  src/3d/occt/stepimporter.cpp
+  src/3d/occt/occinputcontroller.h
+  src/3d/occt/occinputcontroller.cpp
+  src/3d/occt/cachedshapeloader.h
+  src/3d/occt/cachedshapeloader.cpp
+
+  src/3d/robot/robottypes.h
+
+  src/3d/robot/model/jointmodel.h
+  src/3d/robot/model/robotmodel.h
+  src/3d/robot/model/robotstate.h
+
+  #src/3d/robot/kinematics/robotframes.h
+  #src/3d/robot/kinematics/forwardkinematics.h
+  #src/3d/robot/kinematics/forwardkinematics.cpp
+
+  src/3d/robot/visualization/robotvisualmodel.h
+  src/3d/robot/visualization/robotsceneadapter.h
+  src/3d/robot/visualization/robotsceneadapter.cpp
 )
 
 qt_add_qml_module(appOCCT_test
@@ -65,6 +71,7 @@ qt_add_qml_module(appOCCT_test
   VERSION 1.0
   QML_FILES
     qml/Main.qml
+    SOURCES src/3d/utils.h src/3d/utils.cpp
 )
 
 target_compile_definitions(appOCCT_test PRIVATE

@@ -3,27 +3,22 @@
 #include <limits>
 #include <string>
 
-#include "robot/robottypes.h"
+#include "3d/mathtypes.h"
 
 namespace robot {
 
-enum class JointType
-{
-  RevoluteZ
-};
+enum class JointType { RevoluteZ };
 
 struct JointModel
 {
   std::string name;
   JointType type = JointType::RevoluteZ;
 
-  Transform Ti = identityTransform(); // transform from current i-th JCS to the previous (i-1)-th JSC
+  // transform from current i-th JCS to the previous (i-1)-th JSC
+  M4d localTransform{};
 
   double qMin = -std::numeric_limits<double>::infinity();
   double qMax =  std::numeric_limits<double>::infinity();
-
-  double qHome = 0.0;
-  double qOffset = 0.0;
 };
 
 }
