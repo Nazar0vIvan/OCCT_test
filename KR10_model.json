@@ -1,0 +1,74 @@
+{
+  "name": "KR10_R1420",
+  "joints": [
+    {
+      "offset": { "dx": 0, "dy": 0, "dz": 227, "da": 0, "db": 0, "dc": 0 },
+      "axis": "z",
+      "min": -170,
+      "max": 170
+    },
+    {
+      "offset": { "dx": 150, "dy": -90.4, "dz": 223, "da": 0, "db": 0, "dc": -90 },
+      "axis": "z",
+      "min": -190,
+      "max": 45
+    },
+    {
+      "offset": { "dx": 0, "dy": -610, "dz": -11.1, "da": 90, "db": 0, "dc": 0 },
+      "axis": "z",
+      "min": -120,
+      "max": 156
+    },
+    {
+      "offset": { "dx": -20, "dy": -357, "dz": 101.5, "da": 0, "db": 0, "dc": -90 },
+      "axis": "z",
+      "min": -185,
+      "max": 185
+    },
+    {
+      "offset": { "dx": 0, "dy": -39, "dz": -303, "da": 0, "db": 0, "dc": 90 },
+      "axis": "z",
+      "min": -120,
+      "max": 120
+    },
+    {
+      "offset": { "dx": 0, "dy": -80, "dz": -39, "da": 0, "db": 0, "dc": 90 },
+      "axis": "z",
+      "min": -350,
+      "max": 350
+    }
+  ],
+
+  "links": [
+    {
+      "filename": "0_BASE.stp",
+      "rgb": [0.72, 0.76, 0.80]
+    },
+    {
+      "filename": "1_ROTATING_COLUMN.stp",
+      "rgb": [0.72, 0.76, 0.80]
+    },
+    {
+      "filename": "2_LINK_ARM.stp",
+      "rgb": [0.72, 0.76, 0.80]
+    },
+    {
+      "filename": "3_IN-LINE_WRIST.stp",
+      "rgb": [0.72, 0.76, 0.80]
+    },
+    {
+      "filename": "4_WRIST1.stp",
+      "rgb": [0.72, 0.76, 0.80]
+    },
+    {
+      "filename": "5_WRIST2.stp",
+      "rgb": [0.72, 0.76, 0.80]
+    },
+    {
+      "filename": "6_WRIST3.stp",
+      "rgb": [0.72, 0.76, 0.80]
+    }
+  ],
+	"qHOME": [0.0, -90.0, 90.0, 0.0, 0.0, 0.0],
+  "pHOME": [890.0, 0.0, 1080.0, 0.0, 90.0, 0.0],
+}

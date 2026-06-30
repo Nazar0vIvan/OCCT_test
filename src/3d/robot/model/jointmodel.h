@@ -5,8 +5,6 @@
 
 #include "3d/mathtypes.h"
 
-namespace robot {
-
 enum class JointType { RevoluteZ };
 
 struct JointModel
@@ -21,4 +19,4 @@ struct JointModel
   double qMax =  std::numeric_limits<double>::infinity();
 };
 
-}
+

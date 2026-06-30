@@ -3,16 +3,16 @@
 #include <string>
 
 #include "3d/robot/model/jointmodel.h"
+#include "3d/robot/model/linkmodel.h"
 
-namespace robot {
-
-constexpr std::size_t RobotDof = 6;
-constexpr std::size_t LinkCount = RobotDof + 1;
+constexpr std::size_t DofCount = 6;
+constexpr std::size_t LinkCount = DofCount + 1;
 
 struct RobotModel
 {
   std::string name;
-  std::array<JointModel, RobotDof> joints;
+  std::array<JointModel, DofCount> joints;
+  std::array<LinkModel, LinkCount> links;
 };
 
-}
+

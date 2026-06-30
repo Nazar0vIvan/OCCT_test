@@ -26,16 +26,10 @@ M3d cleaned(const M3d& m)
 gp_Dir axisDir(Axis axis)
 {
   switch (axis) {
-    case Axis::X:
-      return gp_Dir{1.0, 0.0, 0.0};
-
-    case Axis::Y:
-      return gp_Dir{0.0, 1.0, 0.0};
-
-    case Axis::Z:
-      return gp_Dir{0.0, 0.0, 1.0};
-    }
-
+    case Axis::X: return gp_Dir{1.0, 0.0, 0.0};
+    case Axis::Y: return gp_Dir{0.0, 1.0, 0.0};
+    case Axis::Z: return gp_Dir{0.0, 0.0, 1.0};
+  }
   return gp_Dir{1.0, 0.0, 0.0};
 }
 
@@ -43,9 +37,7 @@ gp_Dir axisDir(Axis axis)
 
 std::optional<V3d> jsonValueToPoint(const QJsonValue& value)
 {
-  if (!value.isArray()) {
-    return std::nullopt;
-  }
+  if (!value.isArray()) return std::nullopt;
 
   const QJsonArray array = value.toArray();
 
@@ -57,7 +49,7 @@ std::optional<V3d> jsonValueToPoint(const QJsonValue& value)
     return std::nullopt;
   }
 
-  return V3d{
+  return V3d {
     array[0].toDouble(),
     array[1].toDouble(),
     array[2].toDouble()
@@ -72,9 +64,7 @@ std::optional<QVector<V3d>> jsonArrayToPoints(const QJsonArray& array)
   for (const QJsonValue& value : array) {
     const auto point = jsonValueToPoint(value);
 
-    if (!point.has_value()) {
-      return std::nullopt;
-    }
+    if (!point.has_value()) return std::nullopt;
 
     points.push_back(*point);
   }
