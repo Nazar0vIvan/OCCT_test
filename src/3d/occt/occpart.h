@@ -9,7 +9,7 @@
 
 #include <gp_Trsf.hxx>
 
-#include "occutils.h"
+#include "3d/occpartoptions.h"
 
 class OccPart final
 {

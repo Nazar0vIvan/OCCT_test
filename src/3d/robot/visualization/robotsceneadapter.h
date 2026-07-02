@@ -1,22 +1,27 @@
 #pragma once
 
-#include <memory>
+#include <array>
 
 #include "3d/robot/model/robotmodel.h"
-#include "3d/robot/model/robotstate.h"
+#include "robotsceneapi.h"
 
 #include <QString>
 
 class RobotSceneAdapter final
 {
 public:
-  RobotSceneAdapter(std::shared_ptr<const RobotModel> model);
+  RobotSceneAdapter(const RobotModel& model, RobotSceneApi sceneApi);
 
-  [[nodiscard]] bool load(const RobotModel& visualModel);
-  [[nodiscard]] bool applyState(const RobotState& state);
+  using PartId = std::size_t;
+  using AddPartFn = std::function<std::optional<PartId>(const LinkModel&)>;
+  using SetTransformFn = std::function<bool(PartId, const M4d&)>;
+  using UpdateViewerFn = std::function<void()>;
+
+  [[nodiscard]] bool load(const std::array<LinkModel, LinkCount>& links);
+  [[nodiscard]] bool applyState(const std::array<double, DofCount>& q);
 
 private:
-  std::shared_ptr<const RobotModel> m_robotmodel;
+  RobotModel m_robotmodel;
 
   std::array<size_t, DofCount> linksPartIds;
   bool m_visualsLoaded = false;

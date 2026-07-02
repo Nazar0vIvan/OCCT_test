@@ -2,10 +2,10 @@
 
 #include <QString>
 
-#include "3d/occpartoptions.h"
+#include "3d/occpartmodel.h"
 
 struct LinkModel
 {
-  std::size_t linkIndex = 0;
-  OccPartOptions options;
+  QString fileName;
+  OccPartModel options;
 };

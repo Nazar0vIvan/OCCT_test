@@ -203,7 +203,7 @@ void OccViewer::configureHighlightStyles()
   Handle(Prs3d_Drawer) hoverStyle = m_context->HighlightStyle(Prs3d_TypeOfHighlight_LocalDynamic);
 
   if (!hoverStyle.IsNull()) {
-    hoverStyle->SetColor(OccUtils::rgb(102, 179, 204));
+    hoverStyle->SetColor(rgb(102, 179, 204));
     hoverStyle->SetDisplayMode(AIS_Shaded);
     hoverStyle->SetFaceBoundaryDraw(false);
     hoverStyle->SetZLayer(Graphic3d_ZLayerId_Top);
@@ -212,7 +212,7 @@ void OccViewer::configureHighlightStyles()
   Handle(Prs3d_Drawer) selectionStyle = m_context->HighlightStyle(Prs3d_TypeOfHighlight_LocalSelected);
 
   if (!selectionStyle.IsNull()) {
-    selectionStyle->SetColor(OccUtils::rgb(0, 128, 255));
+    selectionStyle->SetColor(rgb(0, 128, 255));
     selectionStyle->SetDisplayMode(AIS_Shaded);
     selectionStyle->SetFaceBoundaryDraw(false);
     selectionStyle->SetZLayer(Graphic3d_ZLayerId_Top);

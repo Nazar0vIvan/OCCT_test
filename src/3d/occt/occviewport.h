@@ -29,11 +29,8 @@ public:
   void redraw();
 
   void mousePress(const QPoint& pos, Qt::MouseButton button);
-
   void mouseMove(const QPoint& pos);
-
   void mouseRelease(Qt::MouseButton button);
-
   void wheel(const QPoint& pos, int angleDeltaY);
 
 private:
