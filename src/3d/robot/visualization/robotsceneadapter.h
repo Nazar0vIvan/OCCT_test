@@ -21,7 +21,8 @@ public:
   [[nodiscard]] bool applyState(const std::array<double, DofCount>& q);
 
 private:
-  RobotModel m_robotmodel;
+  RobotModel m_model;
+  RobotSceneApi m_sceneApi;
 
   std::array<size_t, DofCount> linksPartIds;
   bool m_visualsLoaded = false;

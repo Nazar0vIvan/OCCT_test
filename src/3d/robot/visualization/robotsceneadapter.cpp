@@ -1,4 +1,4 @@
 #include "robotsceneadapter.h"
 
-RobotSceneAdapter::RobotSceneAdapter(std::shared_ptr<const RobotModel> model) : m_robotmodel{model}
+RobotSceneAdapter::RobotSceneAdapter(const RobotModel& model, RobotSceneApi sceneApil) : m_robotmodel{model}
 {}
