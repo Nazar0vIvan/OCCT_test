@@ -22,10 +22,10 @@
 #include <gp_Dir.hxx>
 #include <gp_Pnt.hxx>
 
-OccPart::OccPart(const TopoDS_Shape& shape, const OccPartOptions& options)
-    : m_color(options.color),
-      m_transform(options.transform),
-      m_selectionMode(options.selectionMode)
+OccPart::OccPart(const TopoDS_Shape& shape, const OccPartProps& props)
+    : m_color(props.color),
+      m_transform(props.transform),
+      m_selectionMode(props.selectionMode)
 {
   if (shape.IsNull()) return;
 
@@ -35,8 +35,8 @@ OccPart::OccPart(const TopoDS_Shape& shape, const OccPartOptions& options)
   configureFaceBoundary();
   applyTransform();
 
-  if (options.showTrihedron) {
-    enableTrihedron(options.trihedronSize);
+  if (props.showTrihedron) {
+    enableTrihedron(props.trihedronSize);
   }
 }
 bool OccPart::isValid() const

@@ -130,7 +130,7 @@ M4d makeRotation(double angleDeg, Axis axis)
   return result;
 }
 
-M4d makeTranssform(const M3d& rot, const V3d& origin)
+M4d makeTransform(const M3d& rot, const V3d& origin)
 {
   M4d result;
 

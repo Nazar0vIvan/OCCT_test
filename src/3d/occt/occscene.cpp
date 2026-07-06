@@ -1,90 +1,32 @@
 #include "occscene.h"
 
-#include <QDir>
-#include <QElapsedTimer>
 #include <QDebug>
 
 #include <AIS_InteractiveContext.hxx>
-#include <AIS_InteractiveObject.hxx>
-#include <AIS_Line.hxx>
 #include <AIS_SelectionModesConcurrency.hxx>
 #include <AIS_Shape.hxx>
-#include <AIS_Trihedron.hxx>
-#include <AIS_ViewCube.hxx>
+
+#include <Graphic3d_ZLayerId.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopoDS_Shape.hxx>
 
 #include <V3d_View.hxx>
 
-#include <BRepPrimAPI_MakeBox.hxx>
-#include <BRepPrimAPI_MakeSphere.hxx>
-
-#include <Graphic3d_ZLayerId.hxx>
-
-#include <gp_Vec.hxx>
-#include <gp_Trsf.hxx>
-#include <gp_Ax1.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Dir.hxx>
-
-#include <cmath>
-
-namespace
-{
-constexpr double PI = 3.141592653589793238462643383279502884;
-}
-
-OccScene::OccScene(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view, const QString& cadDir)
-  : m_context(context),
-    m_view(view),
-    m_shapeLoader(cadDir),
-    m_worldAxes(currentWorldAxisLength()),
-    m_viewCube()
+OccScene::OccScene(
+    const Handle(AIS_InteractiveContext)& context,
+    const Handle(V3d_View)& view,
+    const QString& cadDir)
+    : m_context(context)
+      , m_view(view)
+      , m_shapeLoader(cadDir)
+      , m_worldAxes(currentWorldAxisLength())
+      , m_viewCube()
 {}
 
 bool OccScene::isValid() const
 {
   return !m_context.IsNull() && !m_view.IsNull();
-}
-
-bool OccScene::loadStaticScene()
-{
-  if (!isValid()) {
-    qWarning() << "Cannot load static OCCT scene: context or view is null";
-    return false;
-  }
-
-  displayInfrastructure();
-
-  bool ok = true;
-
-  // ---------------------------------------------------------------------------
-  // ROBOT
-  // ---------------------------------------------------------------------------
-
-  // ---------------------------------------------------------------------------
-  // TABLE
-  // ---------------------------------------------------------------------------
-
-  TopoDS_Shape tableShape = BRepPrimAPI_MakeBox(740.0, 940.0, 20.0).Shape();
-
-  OccPartOptions tableOptions;
-  tableOptions.transform.SetTranslation(gp_Vec(900.0, -470.0, 255.0));
-
-  ok &= addShapePartWithId(tableShape, tableOptions).has_value();
-
-  // ---------------------------------------------------------------------------
-  // ROLLER
-  // ---------------------------------------------------------------------------
-
-  // const V3d ur(0.999349, -0.036055, 0.000879);
-  // const V3d Cr(926.290032, -59.007181, 623.760314); // A point on the axis (near the data “middle”)
-  // const double Rr = 20.043646;
-
-  m_context->UpdateCurrentViewer();
-
-  return ok;
 }
 
 void OccScene::updateCameraDependentObjects()
@@ -226,7 +168,7 @@ double OccScene::currentWorldAxisLength() const
   return cameraScale * 0.05;
 }
 
-std::optional<OccScene::PartId> OccScene::addStepPartWithId(const QString& stpFileName, const OccPartOptions& options)
+std::optional<OccScene::PartId> OccScene::addStepPartWithId(const QString& stpFileName, const OccPartProps& props)
 {
   if (!isValid()) {
     qWarning() << "Cannot add STEP part: context or view is null";
@@ -240,10 +182,10 @@ std::optional<OccScene::PartId> OccScene::addStepPartWithId(const QString& stpFi
     return std::nullopt;
   }
 
-  return addShapePartWithId(result.shape, options);
+  return addShapePartWithId(result.shape, props);
 }
 
-std::optional<OccScene::PartId> OccScene::addShapePartWithId(const TopoDS_Shape& shape, const OccPartOptions& options)
+std::optional<OccScene::PartId> OccScene::addShapePartWithId(const TopoDS_Shape& shape, const OccPartProps& props)
 {
   if (!isValid()) {
     qWarning() << "Cannot add OCCT shape part: context or view is null";
@@ -255,7 +197,7 @@ std::optional<OccScene::PartId> OccScene::addShapePartWithId(const TopoDS_Shape&
     return std::nullopt;
   }
 
-  OccPart part(shape, options);
+  OccPart part(shape, props);
 
   if (!part.isValid()) {
     qWarning() << "Cannot add OCCT shape part: AIS presentation was not created";
@@ -266,20 +208,20 @@ std::optional<OccScene::PartId> OccScene::addShapePartWithId(const TopoDS_Shape&
     return std::nullopt;
   }
 
-  const PartId id{m_parts.size()};
+  const PartId id = m_parts.size();
   m_parts.emplace_back(std::move(part));
 
   return id;
 }
 
-bool OccScene::setPartTransform(const PartId id, const gp_Trsf& transform)
+bool OccScene::setPartTransform(const PartId id, const M4d& transform)
 {
-  if (id.value >= m_parts.size()) {
-    qWarning() << "Invalid OccScene part id:" << id.value;
+  if (id >= m_parts.size()) {
+    qWarning() << "Invalid OCCT scene part id:" << id;
     return false;
   }
 
-  m_parts[id.value].setTransform(transform);
+  m_parts[id].setTransform(transform);
   return true;
 }
 

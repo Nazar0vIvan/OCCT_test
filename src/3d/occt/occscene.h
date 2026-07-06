@@ -1,13 +1,14 @@
 #pragma once
 
+#include "3d/mathtypes.h"
+#include "3d/occpartprops.h"
+
 #include "cachedshapeloader.h"
 #include "occpart.h"
 #include "occviewcube.h"
 #include "occworldaxes.h"
 
 #include <Standard_Handle.hxx>
-#include <Quantity_Color.hxx>
-#include <gp_Trsf.hxx>
 
 #include <QString>
 
@@ -22,14 +23,9 @@ class TopoDS_Shape;
 class OccScene final
 {
 public:
-  struct PartId
-  {
-    std::size_t value = 0;
-  };
+  using PartId = std::size_t;
 
-public:
   OccScene(const Handle(AIS_InteractiveContext)& context, const Handle(V3d_View)& view, const QString& cadDir);
-
   ~OccScene() = default;
 
   OccScene(const OccScene&) = delete;
@@ -40,38 +36,29 @@ public:
 
   [[nodiscard]] bool isValid() const;
 
-  bool loadStaticScene();
-
-  [[nodiscard]] std::optional<PartId> addStepPartWithId(const QString& stpFileName, const OccPartOptions& options = {});
-  [[nodiscard]] std::optional<PartId> addShapePartWithId(const TopoDS_Shape& shape, const OccPartOptions& options = {});
-  [[nodiscard]] bool setPartTransform(PartId id, const gp_Trsf& transform);
+  [[nodiscard]] std::optional<PartId> addStepPartWithId(const QString& stpFileName, const OccPartProps& props = {});
+  [[nodiscard]] std::optional<PartId> addShapePartWithId(const TopoDS_Shape& shape, const OccPartProps& props = {});
+  [[nodiscard]] bool setPartTransform(PartId id, const M4d& transform);
 
   void updateViewer();
   void updateCameraDependentObjects();
+  void displayInfrastructure();
 
 private:
-  void displayInfrastructure();
   void displayWorldAxes();
   void redisplayWorldAxes();
-
   void displayViewCube();
-
   bool displayPart(OccPart& part);
   void activateAllSelectionModes(const OccPart& part);
-
   [[nodiscard]] double currentWorldAxisLength() const;
 
 private:
   Handle(AIS_InteractiveContext) m_context;
   Handle(V3d_View) m_view;
-
-  CachedShapeLoader m_shapeLoader;
-
   std::vector<OccPart> m_parts;
-
+  CachedShapeLoader m_shapeLoader;
   OccWorldAxes m_worldAxes;
   OccViewCube m_viewCube;
-
   bool m_worldAxesDisplayed = false;
   bool m_viewCubeDisplayed = false;
 };

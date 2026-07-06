@@ -82,9 +82,9 @@ void OccWorldAxes::configureAxes()
 
   constexpr double width = 2.0;
 
-  m_xAxis->SetColor(OccUtils::rgb(255, 0, 0));
-  m_yAxis->SetColor(OccUtils::rgb(0, 180, 0));
-  m_zAxis->SetColor(OccUtils::rgb(0, 0, 255));
+  m_xAxis->SetColor(rgb(255, 0, 0));
+  m_yAxis->SetColor(rgb(0, 180, 0));
+  m_zAxis->SetColor(rgb(0, 0, 255));
 
   m_xAxis->SetWidth(width);
   m_yAxis->SetWidth(width);

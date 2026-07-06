@@ -1,8 +1,13 @@
 #pragma once
 
-#include "occviewer.h"
-#include "occscene.h"
 #include "occinputcontroller.h"
+#include "occscene.h"
+#include "occviewer.h"
+
+#include "3d/robot/model/robotmodel.h"
+#include "3d/robot/visualization/robotoccsceneadapter.h"
+
+#include <optional>
 
 #include <QPoint>
 #include <QString>
@@ -14,7 +19,6 @@ class OccViewport final
 {
 public:
   OccViewport(Aspect_Handle nativeWindowHandle, const QString& cadDirectory);
-
   ~OccViewport() = default;
 
   OccViewport(const OccViewport&) = delete;
@@ -35,10 +39,15 @@ public:
 
 private:
   void initializeStaticScene();
+  void initializeRobotScene(const QString& cadDirectory);
+  void updateSceneView();
   void applyInputResult(const OccInputResult& result);
 
 private:
   OccViewer m_viewer;
   OccScene m_scene;
+  RobotOccSceneAdapter m_robotOccSceneAdapter;
   OccInputController m_input;
+
+  std::optional<RobotModel> m_robotModel;
 };

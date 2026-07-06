@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QtQml/qqml.h>
 
-#include "3d/occcontroller.h"
+#include "3d/occt/occcontroller.h"
 
 #include <Font_FontMgr.hxx>
 
@@ -16,23 +16,11 @@ int main(int argc, char* argv[])
   // Must outlive QQmlApplicationEngine.
   OccController occController;
 
-  qmlRegisterSingletonInstance(
-      "OCCT_test.Backend",
-      1,
-      0,
-      "OccController",
-      &occController
-      );
+  qmlRegisterSingletonInstance("OCCT_test.Backend", 1, 0, "OccController", &occController);
 
   QQmlApplicationEngine engine;
 
-  QObject::connect(
-      &engine,
-      &QQmlApplicationEngine::objectCreationFailed,
-      &app,
-      []() { QCoreApplication::exit(-1); },
-      Qt::QueuedConnection
-      );
+  QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
 
   engine.loadFromModule("OCCT_test", "Main");
 

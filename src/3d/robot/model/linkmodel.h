@@ -2,10 +2,10 @@
 
 #include <QString>
 
-#include "3d/occpartmodel.h"
+#include "3d/occpartprops.h"
 
 struct LinkModel
 {
   QString fileName;
-  OccPartModel options;
+  OccPartProps props{};
 };

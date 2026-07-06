@@ -9,13 +9,13 @@
 
 #include <gp_Trsf.hxx>
 
-#include "3d/occpartoptions.h"
+#include "3d/occpartprops.h"
 
 class OccPart final
 {
 public:
 
-  explicit OccPart(const TopoDS_Shape& shape, const OccPartOptions& options);
+  explicit OccPart(const TopoDS_Shape& shape, const OccPartProps& props);
 
   ~OccPart() = default;
 
