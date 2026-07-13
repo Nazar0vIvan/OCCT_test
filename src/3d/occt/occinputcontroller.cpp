@@ -81,6 +81,7 @@ OccInputResult OccInputController::wheel(const QPoint& pos, const int angleDelta
   result.needsRedraw = true;
   result.needsViewerUpdate = true;
   result.cameraChanged = true;
+  result.cameraScaleChanged = true;
   return result;
 }
 
@@ -89,11 +90,9 @@ OccInputResult OccInputController::handleLeftButtonPress(const QPoint& pos)
   m_context->MoveTo(pos.x(), pos.y(), m_view, true);
   if (!m_context->HasDetected()) return clearSelection();
 
-  // Single DownCast; result forwarded to avoid re-querying context
-  Handle(AIS_ViewCubeOwner) cubeOwner = Handle(AIS_ViewCubeOwner)::DownCast(m_context->DetectedOwner());
-  if (!cubeOwner.IsNull()) {
-    return handleDetectedViewCubeOwner(cubeOwner);
-  }
+  const Handle(AIS_ViewCubeOwner) owner = Handle(AIS_ViewCubeOwner)::DownCast(m_context->DetectedOwner());
+
+  if (!owner.IsNull()) return handleCube(owner);
 
   return handleDetectedSelectable();
 }
@@ -154,32 +153,30 @@ OccInputResult OccInputController::handlePanMove(const QPoint& pos)
 
 OccInputResult OccInputController::handleHoverMove(const QPoint& pos)
 {
-  m_context->MoveTo(
-    pos.x(),
-    pos.y(),
-    m_view,
-    true
-  );
+  m_context->MoveTo(pos.x(), pos.y(), m_view, false);
 
-  OccInputResult result;
-  result.accepted = true;
-  result.hoverChanged = true;
-
-  return result;
+  OccInputResult input;
+  input.accepted = true;
+  input.needsViewerUpdate = true;
+  input.hoverChanged = true;
+  return input;
 }
 
-OccInputResult OccInputController::handleDetectedViewCubeOwner(const Handle(AIS_ViewCubeOwner)& cubeOwner)
+OccInputResult OccInputController::handleCube(const Handle(AIS_ViewCubeOwner)& owner)
 {
-  // cubeOwner is already validated by the caller; no re-cast needed
-  m_view->SetProj(cubeOwner->MainOrientation());
-  m_view->ZFitAll();
+  const Handle(AIS_ViewCube) cube = Handle(AIS_ViewCube)::DownCast(owner->Selectable());
 
-  OccInputResult result;
-  result.accepted          = true;
-  result.needsRedraw       = true;
-  result.needsViewerUpdate = true;
-  result.cameraChanged     = true;
-  return result;
+  if (cube.IsNull()) return {};
+
+  cube->HandleClick(owner);
+
+  OccInputResult input;
+  input.accepted = true;
+  input.needsRedraw = true;
+  input.needsViewerUpdate = true;
+  input.cameraChanged = true;
+  input.cameraScaleChanged = true;
+  return input;
 }
 
 OccInputResult OccInputController::handleDetectedSelectable()
@@ -187,10 +184,11 @@ OccInputResult OccInputController::handleDetectedSelectable()
   m_context->SelectDetected(AIS_SelectionScheme_Replace);
 
   OccInputResult result;
-  result.accepted = true;
-  result.needsRedraw = true;
+  result.accepted          = true;
+  result.needsRedraw       = true;
   result.needsViewerUpdate = true;
-  result.selectionChanged = true;
+  result.cameraChanged     = true;
+  result.cameraScaleChanged = true;
 
   return result;
 }

@@ -42,33 +42,47 @@
   "links": [
     {
       "filename": "0_BASE.stp",
-      "rgb": [184, 194, 204]
+      "rgb": [0, 0, 0]
     },
     {
       "filename": "1_ROTATING_COLUMN.stp",
-      "rgb": [184, 194, 204]
+      "rgb": [255, 106, 0]
     },
     {
       "filename": "2_LINK_ARM.stp",
-      "rgb": [184, 194, 204]
+      "rgb": [255, 106, 0]
     },
     {
       "filename": "3_IN-LINE_WRIST.stp",
-      "rgb": [184, 194, 204]
+      "rgb": [255, 106, 0]
     },
     {
       "filename": "4_WRIST1.stp",
-      "rgb": [184, 194, 204]
+      "rgb": [255, 106, 0]
     },
     {
       "filename": "5_WRIST2.stp",
-      "rgb": [184, 194, 204]
+      "rgb": [255, 106, 0]
     },
     {
       "filename": "6_WRIST3.stp",
-      "rgb": [184, 194, 204]
+      "rgb": [0, 0, 0]
     }
   ],
+  
+  "end_effector": {
+    "filename": "EE.stp",
+    "rgb": [184, 194, 204]
+  },
+
+  "IkParams": {
+    "sx": 150.0,
+    "sz": 450.0,
+    "a": 610.0,
+    "bx": 20.0,
+    "by": 660.0,
+    "dF": 80.0
+  },
 
   "qHome": [0.0, -90.0, 90.0, 0.0, 0.0, 0.0],
   "pHome": [890.0, 0.0, 1080.0, 0.0, 90.0, 0.0]

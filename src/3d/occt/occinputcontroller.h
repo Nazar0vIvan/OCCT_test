@@ -6,6 +6,8 @@
 #include <Standard_Handle.hxx>
 
 class AIS_ViewCubeOwner;
+class AIS_InteractiveContext;
+class V3d_View;
 
 struct OccInputResult
 {
@@ -13,12 +15,10 @@ struct OccInputResult
   bool needsRedraw = false;
   bool needsViewerUpdate = false;
   bool cameraChanged = false;
+  bool cameraScaleChanged = false;
   bool selectionChanged = false;
   bool hoverChanged = false;
 };
-
-class AIS_InteractiveContext;
-class V3d_View;
 
 class OccInputController final
 {
@@ -40,8 +40,8 @@ private:
   OccInputResult handleRotationMove(const QPoint& pos);
   OccInputResult handlePanMove(const QPoint& pos);
   OccInputResult handleHoverMove(const QPoint& pos);
+  OccInputResult handleCube(const Handle(AIS_ViewCubeOwner)& owner);
 
-  OccInputResult handleDetectedViewCubeOwner(const Handle(AIS_ViewCubeOwner)& cubeOwner);
   OccInputResult handleDetectedSelectable();
   OccInputResult clearSelection();
 

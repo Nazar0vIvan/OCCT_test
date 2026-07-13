@@ -5,12 +5,14 @@
 
 #include "3d/mathtypes.h"
 #include "3d/occt/occscene.h"
-#include "3d/robot/model/robotmodel.h"
+#include "3d/robot/model/kr10model.h"
 
 class RobotOccSceneAdapter final
 {
 public:
   using PartId = OccScene::PartId;
+
+  enum class Status{ Done, Failed };
 
 public:
   explicit RobotOccSceneAdapter(OccScene& scene);
@@ -23,8 +25,8 @@ public:
   RobotOccSceneAdapter(RobotOccSceneAdapter&&) noexcept = delete;
   RobotOccSceneAdapter& operator=(RobotOccSceneAdapter&&) noexcept = delete;
 
-  [[nodiscard]] bool load(const std::array<LinkModel, LinkCount>& links);
-  [[nodiscard]] bool applyTransforms(const std::array<M4d, LinkCount>& transforms);
+  [[nodiscard]] Status load(const std::array<LinkModel, LinkCount>& links, const LinkModel& endEffector);
+  [[nodiscard]] Status applyTransforms(const std::array<M4d, LinkCount>& T0i);
 
 private:
   [[nodiscard]] bool isReady() const;
@@ -32,6 +34,7 @@ private:
 private:
   OccScene& m_scene;
 
-  std::array<std::optional<PartId>, LinkCount> m_linkPartIds{};
-  bool m_linksLoaded = false;
+  std::array<std::optional<PartId>, LinkCount> m_linkIds{};
+  std::optional<PartId> m_effPartId;
+  bool m_loaded = false;
 };

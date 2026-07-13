@@ -1,5 +1,5 @@
 #include "occviewcube.h"
-#include "occutils.h"
+#include "3d/utils.h"
 
 #include <AIS_DisplayMode.hxx>
 #include <AIS_ViewCube.hxx>

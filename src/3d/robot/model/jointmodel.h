@@ -1,13 +1,12 @@
 #pragma once
 
 #include <limits>
-#include <string>
+#include <QString>
 
 #include "3d/mathtypes.h"
 
 struct JointModel
 {
-  std::string name;
   Axis axis = Axis::Z;
 
   // transform from current i-th JCS to the previous (i-1)-th JSC

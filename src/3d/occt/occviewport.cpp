@@ -1,18 +1,16 @@
 #include "occviewport.h"
 
-#include "3d/robot/kinematics/forwardkinematics.h"
-
-#include <array>
-
 #include <QDebug>
 #include <QDir>
+#include <QObject>
 
-OccViewport::OccViewport(const Aspect_Handle nativeWindowHandle, const QString& cadDirectory)
-    : m_viewer(nativeWindowHandle),
+OccViewport::OccViewport(const Aspect_Handle handle, const QString& cadDirectory)
+    : m_viewer(handle),
       m_scene(m_viewer.context(), m_viewer.view(), cadDirectory),
-      m_robotOccSceneAdapter(m_scene),
+      m_robotAdapter(m_scene),
       m_input(m_viewer.context(), m_viewer.view())
 {
+  setupRenderTimer();
   initializeStaticScene();
   initializeRobotScene(cadDirectory);
   updateSceneView();
@@ -20,9 +18,7 @@ OccViewport::OccViewport(const Aspect_Handle nativeWindowHandle, const QString& 
 
 bool OccViewport::isValid() const
 {
-  return m_viewer.isValid()
-      && m_scene.isValid()
-      && m_input.isValid();
+  return m_viewer.isValid() && m_scene.isValid() && m_input.isValid();
 }
 
 void OccViewport::resize()
@@ -35,8 +31,7 @@ void OccViewport::resize()
     m_scene.updateCameraDependentObjects();
   }
 
-  m_viewer.updateCurrentViewer();
-  m_viewer.redraw();
+  requestRender(true, true);
 }
 
 void OccViewport::redraw()
@@ -46,7 +41,7 @@ void OccViewport::redraw()
   m_viewer.redraw();
 }
 
-void OccViewport::mousePress(const QPoint& pos,const Qt::MouseButton button)
+void OccViewport::mousePress(const QPoint& pos, const Qt::MouseButton button)
 {
   if (!isValid()) return;
 
@@ -93,24 +88,37 @@ void OccViewport::initializeRobotScene(const QString& cadDirectory)
 
   const QDir cadDir(cadDirectory);
 
-  const QString robotModelFileName = cadDir.filePath(QStringLiteral("KR10.json"));
+  const QString file = cadDir.filePath(QStringLiteral("KR10.json"));
+  m_kr10 = Kr10Model::fromJson(file);
 
-  m_robotModel = RobotModel::fromFile(robotModelFileName);
-
-  if (!m_robotModel) {
-    qWarning() << "Cannot load robot model:" << robotModelFileName;
+  if (!m_kr10) {
+    qWarning() << "Cannot load KR10 model:" << file;
     return;
   }
 
-  if (!m_robotOccSceneAdapter.load(m_robotModel->links)) {
+  m_kin.emplace(*m_kr10);
+
+
+  if (!m_kin->isValid()) {
+    qWarning() << "Cannot initialize KR10 kinematics";
+    m_kin.reset();
+    m_kr10 = std::nullopt;
+    return;
+  }
+
+  if (m_robotAdapter.load(m_kr10->links, m_kr10->endEffector) != RobotOccSceneAdapter::Status::Done) {
     qWarning() << "Cannot load robot links into OCCT scene";
+    m_kin.reset();
+    m_kr10 = std::nullopt;
     return;
   }
 
-  const std::array<M4d, LinkCount> transforms = ForwardKinematics::linkTransforms(*m_robotModel, m_robotModel->qHome);
+  const std::array<M4d, LinkCount> T0i = m_kin->solveFK(m_kr10->qHome);
 
-  if (!m_robotOccSceneAdapter.applyTransforms(transforms)) {
+  if (m_robotAdapter.applyTransforms(T0i) != RobotOccSceneAdapter::Status::Done) {
     qWarning() << "Cannot apply robot HOME transforms";
+    m_kin.reset();
+    m_kr10 = std::nullopt;
     return;
   }
 }
@@ -125,23 +133,60 @@ void OccViewport::updateSceneView()
     m_scene.updateCameraDependentObjects();
   }
 
-  m_viewer.updateCurrentViewer();
-  m_viewer.redraw();
+  requestRender(true, true);
 }
 
-void OccViewport::applyInputResult(const OccInputResult& result)
+void OccViewport::applyInputResult(const OccInputResult& input)
 {
-  if (!result.accepted) return;
+  if (!input.accepted) return;
 
-  if (result.cameraChanged) {
+  if (input.cameraScaleChanged) {
     m_scene.updateCameraDependentObjects();
   }
 
-  if (result.needsViewerUpdate) {
+  requestRender(input.needsViewerUpdate, input.needsRedraw);
+}
+
+void OccViewport::setupRenderTimer()
+{
+  m_timer.setSingleShot(true);
+  m_timer.setInterval(0);
+  m_timer.setTimerType(Qt::PreciseTimer);
+
+  QObject::connect(&m_timer, &QTimer::timeout, [this]() { flushRenderRequest(); });
+}
+
+void OccViewport::requestRender(const bool needsUpdate, const bool needsRedraw)
+{
+  if (!m_viewer.isValid()) return;
+
+  m_update = m_update || needsUpdate;
+  m_redraw = m_redraw || needsRedraw;
+
+  if (!m_timer.isActive()) {
+    m_timer.start();
+  }
+}
+
+void OccViewport::flushRenderRequest()
+{
+  if (!m_viewer.isValid()) {
+    m_update = false;
+    m_redraw = false;
+    return;
+  }
+
+  const bool needsUpdate = m_update;
+  const bool needsRedraw = m_redraw;
+
+  m_update = false;
+  m_redraw = false;
+
+  if (needsUpdate) {
     m_viewer.updateCurrentViewer();
   }
 
-  if (result.needsRedraw) {
+  if (needsRedraw) {
     m_viewer.redraw();
   }
 }

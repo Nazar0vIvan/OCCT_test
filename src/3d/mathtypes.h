@@ -9,6 +9,8 @@
 
 namespace GeomConst {
   constexpr double Eps = 1e-9;
+  constexpr double PosEps = 1e-4;
+  constexpr double RotEps = 1e-6;
   constexpr double Pi = 3.141592653589793238462643383279502884;
   constexpr double DegToRad = Pi / 180.0;
   constexpr double RadToDeg = 180.0 / Pi;

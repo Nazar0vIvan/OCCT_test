@@ -1,12 +1,16 @@
 #pragma once
 
-#include <optional>
+#include <Quantity_Color.hxx>
 
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QVector>
 
+#include <optional>
+
 #include "mathtypes.h"
+
+Quantity_Color rgb(int r, int g, int b);
 
 std::optional<V3d> jsonValueToPoint(const QJsonValue& value);
 std::optional<QVector<V3d>> jsonArrayToPoints(const QJsonArray& array);
@@ -36,3 +40,7 @@ std::optional<V3d> prjPointToPlane(const V3d& point, const V4d& planeCoeffs);
 
 std::optional<V3d> polyfit2d(const V3d& p0, const V3d& p1, const V3d& p2);
 V3d deriv2d(const V3d& point,const V3d& coeffs);
+
+bool isEqual(const V6d& lhs, const V6d& rhs);
+std::vector<double> acos2(const double value);
+

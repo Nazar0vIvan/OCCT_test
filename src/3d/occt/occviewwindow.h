@@ -2,6 +2,9 @@
 
 #include <QWindow>
 
+#include <QPoint>
+#include <QPointF>
+
 #include <memory>
 
 class QExposeEvent;
@@ -35,6 +38,8 @@ protected:
 
 private:
   void initializeViewportIfNeeded();
+
+  [[nodiscard]] QPoint toNativePos(const QPointF& pos) const;
 
 private:
   std::unique_ptr<OccViewport> m_viewport;

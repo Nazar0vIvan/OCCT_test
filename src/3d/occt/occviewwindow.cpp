@@ -8,6 +8,8 @@
 
 #include <Aspect_Handle.hxx>
 
+#include <cmath>
+
 OccViewWindow::OccViewWindow(QWindow* parent) : QWindow(parent)
 {
   setSurfaceType(QSurface::OpenGLSurface);
@@ -44,10 +46,7 @@ void OccViewWindow::mousePressEvent(QMouseEvent* event)
 {
   if (!m_viewport) return;
 
-  m_viewport->mousePress(
-    event->position().toPoint(),
-    event->button()
-  );
+  m_viewport->mousePress(toNativePos(event->position()), event->button());
 
   event->accept();
 }
@@ -56,9 +55,7 @@ void OccViewWindow::mouseMoveEvent(QMouseEvent* event)
 {
   if (!m_viewport) return;
 
-  m_viewport->mouseMove(
-    event->position().toPoint()
-  );
+  m_viewport->mouseMove(toNativePos(event->position()));
 
   event->accept();
 }
@@ -76,10 +73,7 @@ void OccViewWindow::wheelEvent(QWheelEvent* event)
 {
   if (!m_viewport) return;
 
-  m_viewport->wheel(
-    event->position().toPoint(),
-    event->angleDelta().y()
-  );
+  m_viewport->wheel(toNativePos(event->position()), event->angleDelta().y());
 
   event->accept();
 }
@@ -89,7 +83,17 @@ void OccViewWindow::initializeViewportIfNeeded()
   if (m_viewport) return;
 
   m_viewport = std::make_unique<OccViewport>(
-    reinterpret_cast<Aspect_Handle>(winId()),
-    QStringLiteral(OCCT_TEST_CAD_DIR)
+      reinterpret_cast<Aspect_Handle>(winId()),
+      QStringLiteral(OCCT_TEST_CAD_DIR)
   );
+}
+
+QPoint OccViewWindow::toNativePos(const QPointF& pos) const
+{
+  const qreal dpr = devicePixelRatio();
+
+  return {
+    static_cast<int>(std::lround(pos.x() * dpr)),
+    static_cast<int>(std::lround(pos.y() * dpr))
+  };
 }

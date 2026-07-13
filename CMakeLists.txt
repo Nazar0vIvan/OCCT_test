@@ -38,7 +38,7 @@ qt_add_executable(appOCCT_test
   src/3d/occt/occworldaxes.cpp
   src/3d/occt/occscene.h
   src/3d/occt/occscene.cpp
-  src/3d/occt/occutils.h
+
   src/3d/occt/occviewer.h
   src/3d/occt/occviewer.cpp
   src/3d/occt/occviewcube.h
@@ -56,11 +56,11 @@ qt_add_executable(appOCCT_test
 
   src/3d/robot/model/jointmodel.h
   src/3d/robot/model/linkmodel.h
-  src/3d/robot/model/robotmodel.h
-  src/3d/robot/model/robotmodel.cpp
+  src/3d/robot/model/kr10model.h
+  src/3d/robot/model/kr10model.cpp
 
-  src/3d/robot/kinematics/forwardkinematics.h
-  src/3d/robot/kinematics/forwardkinematics.cpp
+  src/3d/robot/kinematics/kr10kinematics.h
+  src/3d/robot/kinematics/kr10kinematics.cpp
 
   src/3d/robot/visualization/robotoccsceneadapter.h
   src/3d/robot/visualization/robotoccsceneadapter.cpp
@@ -71,7 +71,6 @@ qt_add_qml_module(appOCCT_test
   VERSION 1.0
   QML_FILES
     qml/Main.qml
-    SOURCES src/3d/robot/animation/robotjointanimator.h src/3d/robot/animation/robotjointanimator.cpp
 )
 
 target_compile_definitions(appOCCT_test PRIVATE

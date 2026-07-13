@@ -35,6 +35,17 @@ gp_Dir axisDir(Axis axis)
 
 } // namespace
 
+
+Quantity_Color rgb(int r, int g, int b)
+{
+  return Quantity_Color(
+      static_cast<double>(std::clamp(r, 0, 255)) / 255.0,
+      static_cast<double>(std::clamp(g, 0, 255)) / 255.0,
+      static_cast<double>(std::clamp(b, 0, 255)) / 255.0,
+      Quantity_TOC_RGB
+  );
+}
+
 std::optional<V3d> jsonValueToPoint(const QJsonValue& value)
 {
   if (!value.isArray()) return std::nullopt;
@@ -362,4 +373,30 @@ V3d deriv2d(const V3d& point, const V3d& coeffs)
   }
 
   return *unit;
+}
+
+std::vector<double> acos2(const double value)
+{
+  if (value < -1.0 - GeomConst::Eps || value > 1.0 + GeomConst::Eps) {
+    return {};
+  }
+
+  const double q = std::acos(std::clamp(value, -1.0, 1.0));
+
+  if (std::abs(q) <= GeomConst::Eps || std::abs(std::abs(q) - GeomConst::Pi) <= GeomConst::Eps) {
+    return {q};
+  }
+
+  return {q, -q};
+}
+
+
+bool isEqual(const V6d &lhs, const V6d &rhs)
+{
+  for (std::size_t i = 0; i < 6; ++i) {
+    if (std::abs(lhs[i] - rhs[i]) > GeomConst::Eps)
+      return false;
+  }
+
+  return true;
 }
