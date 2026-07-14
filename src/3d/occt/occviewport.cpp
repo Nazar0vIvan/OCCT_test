@@ -1,8 +1,27 @@
 #include "occviewport.h"
 
+#include "3d/utils.h"
+
 #include <QDebug>
 #include <QDir>
 #include <QObject>
+#include <QStringList>
+
+namespace
+{
+
+QString fmtV6(const V6d& vals)
+{
+  QStringList text;
+
+  for (const double val : vals) {
+      text << QString::number(val, 'f', 2);
+    }
+
+  return QStringLiteral("[%1]").arg(text.join(QStringLiteral(", ")));
+}
+
+} // namespace
 
 OccViewport::OccViewport(const Aspect_Handle handle, const QString& cadDirectory)
     : m_viewer(handle),
@@ -67,6 +86,43 @@ void OccViewport::wheel(const QPoint& pos, const int angleDeltaY)
   if (!isValid()) return;
 
   applyInputResult(m_input.wheel(pos, angleDeltaY));
+}
+
+void OccViewport::solveIK(const V6d& pose)
+{
+  if (!m_kin) {
+    qWarning() << "Cannot solve IK: KR10 kinematics is not initialized";
+    return;
+  }
+
+  const M4d T06 = makeTransform(euler2rot(pose[3], pose[4], pose[5]), V3d{pose[0], pose[1], pose[2]});
+
+  const std::vector<V6d> qs = m_kin->solveIK(T06);
+
+  qInfo().noquote() << QStringLiteral("IK target %1 -> %2 solution(s)").arg(fmtV6(pose)).arg(qs.size());
+
+  for (std::size_t idx = 0; idx < qs.size(); ++idx) {
+    qInfo().noquote() << QStringLiteral("  #%1 q = %2").arg(idx + 1).arg(fmtV6(qs[idx]));
+  }
+}
+
+void OccViewport::solveFK(const V6d& q)
+{
+  if (!m_kin) {
+    qWarning() << "Cannot solve FK: KR10 kinematics is not initialized";
+    return;
+  }
+
+  const std::array<M4d, LinkCount> T0i = m_kin->solveFK(q);
+
+  if (m_robotAdapter.applyTransforms(T0i) != RobotOccSceneAdapter::Status::Done) {
+    qWarning() << "Cannot apply FK transforms";
+    return;
+  }
+
+  qInfo().noquote() << QStringLiteral("FK q %1 applied").arg(fmtV6(q));
+
+  requestRender(true, true);
 }
 
 void OccViewport::initializeStaticScene()

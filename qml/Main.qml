@@ -10,6 +10,45 @@ import OCCT_test.Backend 1.0
 ApplicationWindow {
   id: root
 
+  function readV6d(view, label) {
+    const vals = []
+
+    for (let idx = 0; idx < view.count; ++idx) {
+      const item = view.model.get(idx)
+      const text = String(item.value).trim()
+      const val = Number(text)
+
+      if (text.length === 0 || !isFinite(val)) {
+        console.warn("Invalid", label, "at row", idx, ":", text)
+        return []
+      }
+
+      vals.push(val)
+    }
+
+    return vals
+  }
+
+  function solveIK() {
+    const pose = readV6d(lvIKInput, "IK input")
+
+    if (pose.length !== 6) {
+      return
+    }
+
+    OccController.solveIK(pose)
+  }
+
+  function solveFK() {
+    const q = readV6d(lvFKInput, "FK input")
+
+    if (q.length !== 6) {
+      return
+    }
+
+    OccController.solveFK(q)
+  }
+
   visible: true
   width: 1000
   height: 700
@@ -52,6 +91,9 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.margins: 1
 
+        focus: false
+        activeFocusOnTab: false
+
         window: OccController.viewWindow
 
         Component.onDestruction: {
@@ -75,7 +117,7 @@ ApplicationWindow {
         id: lvIKInput
 
         Layout.preferredWidth: 260
-        Layout.fillHeight: true
+        Layout.preferredHeight: 210
         spacing: 10
 
         interactive: false
@@ -87,12 +129,12 @@ ApplicationWindow {
         }
 
         model: ListModel {
-          ListElement {name: "X:"; unit: "mm" }
-          ListElement {name: "Y:"; unit: "mm" }
-          ListElement {name: "Z:"; unit: "mm" }
-          ListElement {name: "A:"; unit: "deg" }
-          ListElement {name: "B:"; unit: "deg" }
-          ListElement {name: "C:"; unit: "deg" }
+          ListElement {name: "X:"; unit: "mm";  value: "0.00" }
+          ListElement {name: "Y:"; unit: "mm";  value: "0.00" }
+          ListElement {name: "Z:"; unit: "mm";  value: "0.00" }
+          ListElement {name: "A:"; unit: "deg"; value: "0.00" }
+          ListElement {name: "B:"; unit: "deg"; value: "0.00" }
+          ListElement {name: "C:"; unit: "deg"; value: "0.00" }
         }
 
         delegate: RowLayout {
@@ -105,13 +147,15 @@ ApplicationWindow {
             text: model.name
           }
           TextField {
-            id: control
+            id: tfIk
 
             Layout.preferredWidth: 100
             Layout.preferredHeight: 24
 
-            text: "0.00"
+            text: model.value
             selectByMouse: true
+            activeFocusOnPress: true
+            persistentSelection: false
             leftPadding: 5
 
             background: Rectangle {
@@ -119,57 +163,18 @@ ApplicationWindow {
               border{width: 1; color: "black"}
             }
 
+            onTextEdited: {
+               lvIKInput.model.setProperty(index, "value", text)
+             }
+
             onActiveFocusChanged: {
               if (activeFocus) {
-                selectAll()
+                Qt.callLater(tfIk.selectAll)
+              } else {
+                tfIk.deselect()
               }
             }
 
-          }
-          Text {
-            text: model.unit
-          }
-        }
-      }
-
-      ListView {
-        id: lvIKOutput
-
-        Layout.preferredWidth: 260
-        Layout.fillHeight: true
-        spacing: 10
-
-        interactive: false
-
-        header: Label {
-          text: "IK Output"
-          font.bold: true
-          bottomPadding: 10
-        }
-
-        model: ListModel {
-          ListElement {name: "q1:"; unit: "deg" }
-          ListElement {name: "q2:"; unit: "deg" }
-          ListElement {name: "q3:"; unit: "deg" }
-          ListElement {name: "q4:"; unit: "deg" }
-          ListElement {name: "q5:"; unit: "deg" }
-          ListElement {name: "q6:"; unit: "deg" }
-        }
-
-        delegate: RowLayout {
-
-          width: lvIKOutput.width
-
-          Label {
-            Layout.preferredWidth: 20
-            Layout.preferredHeight: 24
-            text: model.name
-          }
-          Label {
-            Layout.preferredWidth: 100
-            Layout.preferredHeight: 24
-
-            text: "0.00"
           }
           Text {
             text: model.unit
@@ -183,10 +188,97 @@ ApplicationWindow {
         padding: 5
         text: "Solve IK"
 
+        onClicked: root.solveIK()
+
         background: Rectangle {
           color: "#e0e0e0"
           border{width: 1; color: "gray"}
           opacity: btnSolveIK.pressed ? 0.6 : btnSolveIK.hovered ? 1.0 : 0.6
+        }
+      }
+
+      ListView {
+        id: lvFKInput
+
+        Layout.preferredWidth: 260
+        Layout.preferredHeight: 210
+        spacing: 10
+
+        interactive: false
+
+        header: Label {
+          text: "FK Input"
+          font.bold: true
+          bottomPadding: 10
+        }
+
+        model: ListModel {
+          ListElement {name: "q1:"; unit: "deg"; value: "0.00" }
+          ListElement {name: "q2:"; unit: "deg"; value: "-90.00" }
+          ListElement {name: "q3:"; unit: "deg"; value: "90.00" }
+          ListElement {name: "q4:"; unit: "deg"; value: "0.00" }
+          ListElement {name: "q5:"; unit: "deg"; value: "0.00" }
+          ListElement {name: "q6:"; unit: "deg"; value: "0.00" }
+        }
+
+        delegate: RowLayout {
+
+          width: lvFKInput.width
+
+          Label {
+            Layout.preferredWidth: 20
+            Layout.preferredHeight: 24
+            text: model.name
+          }
+
+          TextField {
+            id: tfFk
+
+            Layout.preferredWidth: 100
+            Layout.preferredHeight: 24
+
+            text: model.value
+            selectByMouse: true
+            activeFocusOnPress: true
+            persistentSelection: false
+            leftPadding: 5
+
+            background: Rectangle {
+              color: "transparent"
+              border { width: 1; color: "black" }
+            }
+
+            onTextEdited: {
+              lvFKInput.model.setProperty(index, "value", text)
+            }
+
+            onActiveFocusChanged: {
+              if (activeFocus) {
+                Qt.callLater(tfFk.selectAll)
+              } else {
+                tfFk.deselect()
+              }
+            }
+          }
+
+          Text {
+            text: model.unit
+          }
+        }
+      }
+
+      Button {
+        id: btnSolveFK
+
+        padding: 5
+        text: "Solve FK"
+
+        onClicked: root.solveFK()
+
+        background: Rectangle {
+          color: "#e0e0e0"
+          border{width: 1; color: "gray"}
+          opacity: btnSolveFK.pressed ? 0.6 : btnSolveFK.hovered ? 1.0 : 0.6
         }
       }
 

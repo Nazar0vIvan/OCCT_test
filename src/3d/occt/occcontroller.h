@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QWindow>
+#include <QVariant>
 
 #include <memory>
 
@@ -15,6 +16,9 @@ class OccController final : public QObject
 public:
   explicit OccController(QObject* parent = nullptr);
   ~OccController() override;
+
+  Q_INVOKABLE void solveIK(const QVariantList& pose);
+  Q_INVOKABLE void solveFK(const QVariantList& q);
 
   Q_DISABLE_COPY_MOVE(OccController)
 

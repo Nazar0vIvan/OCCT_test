@@ -1,6 +1,7 @@
 #include "occviewwindow.h"
 #include "occviewport.h"
 
+#include <QDebug>
 #include <QExposeEvent>
 #include <QMouseEvent>
 #include <QResizeEvent>
@@ -18,6 +19,26 @@ OccViewWindow::OccViewWindow(QWindow* parent) : QWindow(parent)
 OccViewWindow::~OccViewWindow()
 {
   m_viewport.reset();
+}
+
+void OccViewWindow::solveIK(const V6d &pose)
+{
+  if (!m_viewport) {
+    qWarning() << "Cannot solve IK: OCCT viewport is not initialized";
+    return;
+  }
+
+  m_viewport->solveIK(pose);
+}
+
+void OccViewWindow::solveFK(const V6d& q)
+{
+  if (!m_viewport) {
+      qWarning() << "Cannot solve FK: OCCT viewport is not initialized";
+      return;
+    }
+
+  m_viewport->solveFK(q);
 }
 
 void OccViewWindow::exposeEvent(QExposeEvent* event)
@@ -65,6 +86,7 @@ void OccViewWindow::mouseReleaseEvent(QMouseEvent* event)
   if (!m_viewport) return;
 
   m_viewport->mouseRelease(event->button());
+  activateHost();
 
   event->accept();
 }
@@ -96,4 +118,12 @@ QPoint OccViewWindow::toNativePos(const QPointF& pos) const
     static_cast<int>(std::lround(pos.x() * dpr)),
     static_cast<int>(std::lround(pos.y() * dpr))
   };
+}
+
+void OccViewWindow::activateHost() const
+{
+  QWindow* host = parent();
+  if (!host) return;
+
+  host->requestActivate();
 }

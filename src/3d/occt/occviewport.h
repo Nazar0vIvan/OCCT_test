@@ -39,6 +39,9 @@ public:
   void mouseRelease(Qt::MouseButton button);
   void wheel(const QPoint& pos, int angleDeltaY);
 
+  void solveIK(const V6d& pose);
+  void solveFK(const V6d& q);
+
 private:
   void initializeStaticScene();
   void initializeRobotScene(const QString& cadDirectory);

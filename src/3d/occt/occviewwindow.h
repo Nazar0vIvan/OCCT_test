@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include "3d/mathtypes.h"
+
 class QExposeEvent;
 class QResizeEvent;
 class QMouseEvent;
@@ -28,6 +30,9 @@ public:
   OccViewWindow(OccViewWindow&&) noexcept = delete;
   OccViewWindow& operator=(OccViewWindow&&) noexcept = delete;
 
+  void solveIK(const V6d& pose);
+  void solveFK(const V6d& q);
+
 protected:
   void exposeEvent(QExposeEvent* event) override;
   void resizeEvent(QResizeEvent* event) override;
@@ -38,8 +43,8 @@ protected:
 
 private:
   void initializeViewportIfNeeded();
-
   [[nodiscard]] QPoint toNativePos(const QPointF& pos) const;
+  void activateHost() const;
 
 private:
   std::unique_ptr<OccViewport> m_viewport;
